@@ -1,0 +1,516 @@
+%%%%%
+%%
+%% This file sets up the Abil datatype and creates Abil macros.  These
+%% are for abilities that characters may have.
+%%
+%%%%%
+
+\DECLARESUBTYPE{Abil}{Element}
+\PRESETS{Abil}{
+  \F\MYtext	%% text of ability, read by user
+  \F\MYeffect	%% effect text of ability, read by recipient(s)
+  }
+
+
+%%%%%
+%% \ability{<name>}{<text>}{<effect>}
+%%
+%% \ability is a wrapper around \INSTANCE, useful for 1-shot abilities,
+%% etc.
+\newinstance{Abil}{\ability[3]}{
+  \s\MYname{#1}\s\MYtext{#2}\s\MYeffect{#3}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\NEW{Abil}{\aTest}{
+%  \s\MYname	{Test Ability}
+%  \s\MYtext	{You are a test.}
+%  \s\MYeffect	{This is a Test.}
+%}
+%
+%\NEW{Abil}{\aSpecial}{
+%  \s\MYname	{Special Powers}
+%  \s\MYtext	{You have special powers, as detailed in your \gTest{}
+%		greensheet.}
+%  \s\MYeffect	{I have special powers!}
+%  \s\MYgreens	{\gTest{}}
+%  \suite
+%  }
+
+\NEW{Abil}{\aFiremansCarry}{
+  \s\MYname	{Fireman's Carry}
+  \s\MYtext	{You can carry a body as if it were two-hands bulky.}
+  \s\MYeffect	{I can carry this body well.}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+  
+%% Basic DarkWater-style Martial Attack abilities
+
+
+%% Everyone has these 3
+\NEW{Abil}{\aAssist}{
+  \s\MYname	{Assist}
+  \s\MYtext	{You can assist someone else's attack.  You must be
+		within ZoC of both the attacker and target.  Within two
+		seconds of an attack, direct this at the attacker,
+		saying ``\MYname'' and your CR.}
+  \s\MYeffect	{I assist your attack.}
+  }
+
+\NEW{Abil}{\aKnockOut}{
+  \s\MYname	{Knock Out}
+  \s\MYtext	{You can knock someone out as an attack. Say ``\MYname'' and your CR.}
+  \s\MYeffect	{I knock you out.}
+  }
+
+\NEW{Abil}{\aWound}{
+  \s\MYname	{Wound}
+  \s\MYtext	{You can wound someone as an attack. Say ``\MYname'' and
+		your CR.}
+  \s\MYeffect	{I wound you.}
+  }
+
+
+%% the \basecombat macro can be prepended to the Char abils list
+%% (in char-LIST.tex)
+\def\basecombat{\aKnockOut{}\aWound{}\aAssist{}}
+
+%% only some people have these
+\NEW{Abil}{\aDisarm}{
+  \s\MYname	{Disarm}
+  \s\MYtext	{You can disarm someone of one item as an attack.  Say
+		``\MYname'' and your CR.  Point at the item you want to
+		disarm them of.  If the attack works, they must drop that item.}
+  \s\MYeffect	{I disarm that item.}
+  }
+
+\NEW{Abil}{\aRestrain}{
+  \s\MYname	{Restrain}
+  \s\MYtext	{You can restrain someone as an attack.  Say ``\MYname''
+		and your CR.  You may freely drag, attack, or (if you have
+		a weapon) killing-blow them.  To be free to do anything else, or if
+		your health state changes, you must incant ``release'' and let them
+		go.}
+  \s\MYeffect	{I restrain you.  You are restrained until I incant
+		``release.''}
+  }
+\NEW{Abil}{\aThrow}{
+  \s\MYname	{Throw}
+  \s\MYtext	{You can throw someone as an attack.  Say ``\MYname'' and
+		your CR.  Point in the direction you want to throw them.}
+  \s\MYeffect	{I throw you.  Go in the direction I point ten full steps
+		or until you hit a wall or similar.}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NEW{Abil}{\aWorkConduit}{
+  \s\MYname	{Work the Conduit Machine}
+  \s\MYtext	{I know how to work this machine to open the conduit.}
+  \s\MYeffect	{This ability allows you to work the Conduit Machine. Refer to your ``\gConduitCover{}'' greensheet for details on how to use the this machine to locate the point of closest contact (this greensheet is a duplicate of the sheet attached to the machine and is provided for your reference pre-game). Refer to your ``\gConduit{}'' greensheet for details on how to use the machine to open the conduit.
+  
+This information is transferable. You may freely tell other characters how to work the machine and they will gain this ability as well. This information is also extractable. You may be compelled under enslavement to reveal it. If you tell someone how to use the machine, direct them to acquire a copy of this ability from the $\Omega$ Packet in -013.}
+  \s\MYgreens{\gConduit{} \gConduitCover{}}
+}
+
+\NEW{Abil}{\aMadness}{
+  \s\MYname	{Psychlim: Maniacal Planner}
+  \s\MYtext	{I just thought of the most marvelous idea, but regrettably you are not smart enough to comprehend it.}
+  \s\MYeffect	{You periodically think of insidiously clever ways to accomplish whatever you are currently planning to do, and audibly laugh, giggle, or cackle for no apparent reason. This is very likely to happen in the middle of conversations with others, especially when they start to bore you (which they always do) and your mind wanders to more important intellectual matters.}
+}
+
+\NEW{Abil}{\aAziLimits}{
+  \s\MYname	{Psychlim: My Supervisor Knows Best}
+  \s\MYtext	{If I feel conflicted, my supervisor has all the answers.}
+  \s\MYeffect	{Your tape training has conditioned you to understand that your supervisor has all the answers.  If you feel conflicted about anything, you should consult him or her, and your supervisor will resolve your difficulties.  As such, you will obey your supervisor's commands unless they conflict irreconcilably with your basic persona.}
+}
+
+\NEW{Abil}{\aAvatarPsychlim}{
+  \s\MYname	{Psychlim: Let's Chat}
+  \s\MYtext	{I'm talking to myself.}
+  \s\MYeffect	{If think you are alone, take the opportunity for \cAvatar{} and Vitality to have a chat, since just talking is easier for \cAvatar{}.  If \cAvatar{} says or does something Vitality objects to, or Vitality wants \cAvatar{} to do something \cAvatar{\they} finds objectionable, \cAvatar{} will ``talk to himself'' regardless of the presence of others.  Volume should be proportional to the intensity of the disagreement.}
+}
+
+\NEW{Abil}{\aRaidLab}{
+  \s\MYname	{Raid a Laboratory}
+  \s\MYtext	{I am conducting an exhaustive search of this laboratory.}
+  \s\MYeffect	{You can only use this ability in conjunction with a scientist. You and the supporting scientist must search around the entire lab space for four minutes. This action is very obvious and can be interrupted by others. At the end of this time, you may interact with the ``lab space'' sign for that lab, to get a summary of the research the scientist is conducting.}
+}
+
+%%Ele enslavement relevant abilities:
+\NEW{Abil}{\aFireEnslave}{
+  \s\MYname	{Enslavement (Fire)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave fire elementals and humans. This ability has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+\NEW{Abil}{\aEarthEnslave}{
+  \s\MYname	{Enslavement (Earth)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave earth elementals and humans. This ability has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+\NEW{Abil}{\aAirEnslave}{
+  \s\MYname	{Enslavement (Air)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave air elementals and humans. This ability has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+\NEW{Abil}{\aWaterEnslave}{
+  \s\MYname	{Enslavement (Water)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave water elementals and humans. This ability has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+\NEW{Abil}{\aQEnslave}{
+  \s\MYname	{Enslavement (Quintessence)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave any elemental faction, but not humans. {\bf For the purpose of this ability you have an effective CR of 6.} This ability has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+
+\NEW{Abil}{\aAziEnslave}{%%Grandmother has CR 15
+  \s\MYname	{Enslavement (Azi)}
+  \s\MYtext	{I attempt to enslave you.}
+  \s\MYeffect	{This ability allows you attempt to enslave any elemental faction, but not humans. {\bf For the purpose of this ability you have an effective CR of 6.} This ability also allows you to assist/be assisted when enslaving a target (ie: 2 players using this ability have an effective CR of 12). This action has a 15 minute cool-down whether it works or not. Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+%%Azi can resist enslavement
+\NEW{Abil}{\aResistEnslave}{
+  \s\MYname	{Resist Enslavement}
+  \s\MYtext	{I resist your attempt to enslave me.}
+  \s\MYeffect	{This ability allows you resist enslavement by elementals who use any form of ``Enslavement (type)'' ability on you. You may resist enslavement of any combat rating via this ability, although you do not have to do so.
+  }
+}
+
+%%Conduit sealing/unsealing abilities. No longer relevant
+\NEW{Abil}{\aDrawBlood}{
+  \s\MYname	{Draw Blood}
+  \s\MYtext	{I am drawing blood from you. You suffer a CR loss for 3 minutes.}
+  \s\MYeffect	{You can draw blood from a target player. Refer to associated greensheet for details.
+  }
+}
+
+\NEW{Abil}{\aUnsealConduit}{
+  \s\MYname	{Remove seal}
+  \s\MYtext	{I know how to remove this seal.}
+  \s\MYeffect	{You know how to clean off this seal. (You may interact with ``\sSealedLocationSheet{}'' via this ability. Refer to the associated greensheet for details.)}
+  \s\MYgreens	{\gUnsealConduit{}}
+}
+
+\NEW{Abil}{\aCollaborate}{
+  \s\MYname	{Collaborate}
+  \s\MYtext	{I can collaborate with scientists.}
+  \s\MYeffect	{You have been watching humans for a long time and have great powers of observation and deduction. You can therefore collaborate with scientists. You are considered a scientist for mechanics that require a scientist.}
+}
+
+\NEW{Abil}{\aMakeWhite}{
+  \s\MYname	{Create Amaranth}
+  \s\MYtext	{I am quietly meditating.}
+  \s\MYeffect	{Being a quintessence elemental, you know how to create \iWhiteQ{}, but it requires you to expend a part of your essence. If you would like to do so, find a quiet location conducive to meditating (the place where the water elementals would have met may work), destroy one of your \iQEssence{}, and take one \iWhiteQ{} from that location. {\bf You may use this ability this once every 30 minutes.}}
+}
+
+\NEW{Abil}{\aLearnSong}{
+  \s\MYname	{Teach Me a Song}
+  \s\MYtext	{I am listening intently to your song.}
+  \s\MYeffect	{You love songs! You can pick them up just by hearing them once. If you convince someone to sing a song, or happen to be nearby as they are doing so, you can learn it as long as you interact for at least a minute. If there is an ability associated with the song, you can get the corresponding ability card from a GM.}
+}
+
+\NEW{Abil}{\aModifierSummonFire}{
+  \s\MYname	{Conduit Modifier: Fire's Song}
+  \s\MYtext	{I am singing a song that attracts fire elementals. Flames surround me.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Your song attracts fire elementals from the elemental plane towards the opening on the other side of the Conduit. There can be multiple instances of this modifier on the Conduit to increase the strength of the song.}
+}
+
+\NEW{Abil}{\aModifierSummonAir}{
+  \s\MYname	{Conduit Modifier: Air's Song}
+  \s\MYtext	{I am singing a song that attracts air elementals. A small thunderstorm surrounds me.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Your song attracts air elementals from the elemental plane towards the opening on the other side of the Conduit. There can be multiple instances of this modifier on the Conduit to increase the strength of the song.}
+}
+
+\NEW{Abil}{\aModifierSummonEarth}{
+  \s\MYname	{Conduit Modifier: Earth's Song}
+  \s\MYtext	{I am singing a song that attracts earth elementals. The earth vibrates around me.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Your song attracts earth elementals from the elemental plane towards the opening on the other side of the Conduit. There can be multiple instances of this modifier on the Conduit to increase the strength of the song.}
+}
+
+\NEW{Abil}{\aModifierSummonWater}{
+  \s\MYname	{Conduit Modifier: Water's Song}
+  \s\MYtext	{I am singing a song that attracts water elementals. The earth vibrates around me.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Your song attracts water elementals from the elemental plane towards the opening on the other side of the Conduit. There can be multiple instances of this modifier on the Conduit to increase the strength of the song.}
+}
+
+\NEW{Abil}{\aModifierSummonQuintessence}{
+  \s\MYname	{Conduit Modifier: Quintessence Song}
+  \s\MYtext	{I am singing a song that attracts quintessence elementals. Small white wisps of light flicker into existence around me.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Your song attracts quintessence elementals from the elemental plane towards the opening on the other side of the Conduit. There can be multiple instances of this modifier on the Conduit to increase the strength of the song.}
+}
+
+\NEW{Abil}{\aModifierElectromagnet}{
+  \s\MYname	{Conduit Modifier: Electromagnet}
+  \s\MYtext	{I am hooking up my device to the Conduit.}
+  \s\MYeffect	{This ability accompanies the Electromagnet. If you lose control of the Electromagnet, leave this ability with it. You can use this ability even if you don't know what the Electromagnet does. This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Make sure a GM is present before starting to open the Conduit.}
+}
+
+\NEW{Abil}{\aModifierChannelWhite}{
+  \s\MYname	{Conduit Modifier: Channel Elementium}
+  \s\MYtext	{I am making significant modifications to the machine that controls the Conduit opening.}
+  \s\MYeffect	{This ability can only be used to modify the Conduit as it is being opened. You must place this ability on the ``Conduit modifiers'' sheet at the start of the opening and remain within 2 ZOC of the cart throughout the entire process. Make sure a GM is present before starting to open the Conduit. Your modifications should cause Elementium to be transferred through the Conduit in very large quantities.}
+}
+
+
+\NEW{Abil}{\aFirstAid}{
+  \s\MYname	{First Aid}
+  \s\MYtext	{I know first aid.}
+  \s\MYeffect	{This ability can be used to stop someone from bleeding out and dying from a wound. Take 2 minutes to minister to the person. Roleplay accordingly. This action stops the target's bleed out counter. If first aid is successfully administered, at end of the bleed out counter (a total of 7 minutes with first aid), target wakes up as if they had only been knocked out. (Explain this effect to your target.)}
+}
+
+\NEW{Abil}{\aDominate}{
+  \s\MYname	{Dominate Elemental}
+  \s\MYtext	{I command you to do my bidding.}
+  \s\MYeffect	{This ability allows you order an elemental of any faction as if they were enslaved to you. This action can only be used on one target at a time and cannot be resisted by elementals (it does nothing when used on humans). Refer to the \gEnslave{} greensheet for details.}
+  \s\MYgreens	{}
+}
+
+%Abilities for elemental lords.
+
+\NEW{Abil}{\aAirTeleport}{
+  \s\MYname	{Howling Gale}
+  \s\MYtext	{I vanish in a thunderous blast of air.}
+  \s\MYeffect	{Once per hour, you may go Not Here for up to five minutes, and return to game in any area you could normally access. You may use this immediately, if available, in response to any ability that would otherwise kill or incapacitate you.}
+%Belongs to Mistral
+}
+
+\NEW{Abil}{\aFireWall}{
+  \s\MYname	{Conflagration}
+  \s\MYtext	{I become a roiling pillar of living flame, losing all semblance of human form. A scalding burst of explosive force erupts from me, knocking you unconscious.}
+  \s\MYeffect	{Once per hour, you may knock unconscious all characters (including allied Elementals) within 4 ZoC in a massive pyroclasm. You may not selectively target this ability. Anyone affected by this ability is immune to killing blows until they wake up. Using this power exhausts even your considerable elemental might, and you must go Not Here for ten minutes immediately afterwards. You return to game at the Lava Pool in the \pKitchen{}.}
+%Belongs to Caldera (and Gehenna, if she appears).
+%A way of dealing nonlethally with potential scary Good Guy Mobs?
+%Mistral’s Tempest ability can be used in response to this.
+%This is, I think, the most easily broken of the three. My worry is having Fire Queen tell her minions “I’m going to use this. Wait outside and kill all the unconscious people once I’m gone.” How to remedy? Suggestions?
+%Just say that people knocked out by this ability are somehow magically immune to killing blows.
+}
+
+\NEW{Abil}{\aHeatThings}{
+  \s\MYname	{Heat}
+  \s\MYtext	{I can use my body heat to warm things!}
+  \s\MYeffect	{As a Fire elemental, your body temperature is still significantly above room temperature.  You can give your skin a little boost of power to warm it further.  Now you can heat things!}
+%Belongs to all Fire elementals.
+}
+
+\NEW{Abil}{\aBecomeFiery}{
+  \s\MYname	{Fiery Appearance}
+  \s\MYtext	{Little tongues of flame are roiling all over my body!}
+  \s\MYeffect	{When you feel a strong emotion, be it positive or negative, you lose control of your fiery essence, and little tongues of flame begin dancing all over your skin.  They won't hurt people around you...but they do look very intimidating.}
+%Belongs to all Fire elementals.
+}
+
+\NEW{Abil}{\aPhysicalContact}{
+  \s\MYname	{Touch}
+  \s\MYtext	{I can have physical contact with those who are not Fire elementals.}
+  \s\MYeffect	{Sure, you have a fiery nature, but it's all about mind over matter, isn't it?  If you focus, you can control your emotions and body temperature enough to have physical contact with people who are not Fire elementals.}
+%Belongs to all Fire elementals.
+%Especially important to Juliet.
+}
+
+
+\NEW{Abil}{\aEarthTrap}{
+  \s\MYname	{Granite Vault}
+  \s\MYtext	{Massive shards of stone jut up through the floor and entomb you for 5 minutes.}
+  \s\MYeffect	{Once per hour, you may automatically trap a single target within your Zone of Control in a tomb of rubble. For five minutes, they cannot move or interact with others in any way - they are essentially Not Here, but remain immobile.}
+%Belongs to Shale
+%Mistral’s Tempest ability can be used in response to this.
+}
+
+\NEW{Abil}{\aEarthSpeaker}{
+  \s\MYname	{Living Earth}
+  \s\MYtext	{I can communicate with lifeless stone and metal.}
+  \s\MYeffect	{You may open any item packet made solely of stone or minerals without meeting the normal conditions for doing so. Observers see the stone literally flow to obey your requests.}
+%Belongs to all Earth elementals.
+%Works on Malachite (to extract ore) and Stones from the riverbed (to open the geodes).
+}
+
+
+\NEW{Abil}{\aGlowInDark}{
+  \s\MYname     {Glow in the Dark}
+  \s\MYtext     {I glow with a bright white light.}
+  \s\MYeffect   {You may glow brightly at will.  This will illuminate darkened rooms and is also obvious to anyone in the area.}
+}
+
+\NEW{Abil}{\aWaterSneaky}{
+  \s\MYname	{Hydroform}
+  \s\MYtext	{I can merge my form with a sufficiently large body of water to hide.}
+  \s\MYeffect	{Whenever you're out of combat, you may go Not Here in any room with a substantial amount of water in it. You may also enter Hydroform in a room without a body of water, becoming a puddle on the floor (place the "Puddle" item in the room while you're Not Here and retrieve it once you return). You may continue to observe and listen to anything that occurs while you're in Hydroform as if you were still in game. You may not leave the room while in Hydroform, unless your puddle is moved, in which case you must follow it. Any observers present when you enter or leave Hydroform notice you changing form. You may not stay in Hydroform for more than fifteen minutes at a time, and you may not reenter it for five minutes afterward.}
+%Belongs to Tide
+}
+
+\NEW{Abil}{\aPickLocks}{
+  \s\MYname	{Lock Picking}
+  \s\MYtext	{I can pick locks.}
+  \s\MYeffect	{You can freely pass any locked door. Anyone accompanying you may also pass freely.}
+%Belongs to Tide
+}
+
+\NEW{Abil}{\aBodyguard}{
+  \s\MYname	{Bodyguard}
+  \s\MYtext	{I protect those around me; I can resist combat attacks on their behalf.}
+  \s\MYeffect	{You may use your CR (including any defensive bonuses from items) to resist a combat attack for someone else within 1 ZoC. You can only use this ability on one person at a time.}
+  }
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Social Abilities
+
+\NEW{Abil}{\aFakeEnslavement}{
+  \s\MYname  {Fake Enslavement}
+  \s\MYtext  {Through years of practice, I can convincingly pretend to be enslaved.}
+  \s\MYeffect  {--DO NOT show this ability to the person attempting to enslave you when you use it.-- If you are the target \aEarthEnslave{} and you are able to resist, you may pretend instead that it succeeded (do not say ``resist''). You are not however successfully enslaved, and are not compelled to follow the enslaver's commands.  The enslaver will be unable to tell that the enslavement failed as long as you obey them. (Unlimited)}
+%Rogue
+}
+
+\NEW{Abil}{\aDefySuperiors}{
+  \s\MYname  {You would defy your superiors?!}
+  \s\MYtext  {I shame you into taking the orders from your superior seriously.}
+  \s\MYeffect  {By berating them, you can cause someone with superiors to take their orders seriously and obey them to the letter for 5 minutes. (x3)}
+%Loyal
+}
+
+\NEW{Abil}{\aFascinatingDirt}{
+  \s\MYname  {What a fascinating piece of dirt}
+  \s\MYtext  {I am entranced by my surroundings and oblivious to the people around me.}
+  \s\MYeffect  {Become fascinated with your surroundings.  This prevents a social ability that targets you or requires you to be listening from affecting you. (x3)}
+  %Minion
+
+}\NEW{Abil}{\aRemindsMe}{
+  \s\MYname  {Which reminds me...}
+  \s\MYtext  {I perform a conversational segue so sudden and jarring that all listeners are stunned into following it.}
+  \s\MYeffect  {In the middle of a conversation, change topics suddenly and completely.  Everyone listening is so stunned by the transition, they cannot return to the previous topic for 5 minutes. (x3)}
+  %AirKing
+}
+
+\NEW{Abil}{\aFromHistory}{
+  \s\MYname  {Argument from History}
+  \s\MYtext  {I impress humans with the depth of my interest in their history.}
+  \s\MYeffect  {Your knowledge of human history is unusual among elementals, and demonstrates your commitment to humanity.  By using arguments from history, convince humans that you are proposing a plan with humanity's best intentions at heart. (x3)}
+  %Naturalist
+}
+
+\NEW{Abil}{\aFascinatingThings}{
+  \s\MYname  {But look at what fascinating things they've done!}
+  \s\MYtext  {I can impress other elementals with fascinating details about humans.}
+  \s\MYeffect  {Impress another elemental with fascinating details about humans.  For 5 minutes, that elemental may not take actions that would adversely affect humans. (x3)}
+  %Naturalist RN
+}
+
+\NEW{Abil}{\aMindYourManners}{
+  \s\MYname  {Mind your manners, kindling}
+  \s\MYtext  {I intimidate you into fleeing my presence.}
+  \s\MYeffect  {In a room with less than four humans and no non-fire elementals, you may intimidate all humans to the point that they flee the room in terror.  They may not re-enter the room for 10 minutes or until you leave, unless they return with at least four humans or non-fire elementals. (x3)}
+  %FireQueen
+}
+
+\NEW{Abil}{\aWasThatConvincing}{
+  \s\MYname  {Was that supposed to be convincing?}
+  \s\MYtext  {I am oblivious to political intricacies.}
+  \s\MYeffect  {Political intricacies tend to be lost on you. A social ability that would affect you, does not. (x3)}
+  %Pyro
+}
+
+\NEW{Abil}{\aBlindingCharm}{
+  \s\MYname  {Blinding charm}
+  \s\MYtext  {My natural charm has earned me your trust.}
+  \s\MYeffect  {With a winning smile and an implication of goodwill, you can earn someone's trust for 5 minutes.  For this period, the target thinks the best of you and believes you wouldn't work against their interests.  The effect is broken if you take unambiguous action to the contrary. (x3)}
+  %Juliet
+}
+
+\NEW{Abil}{\aCalmDown}{
+  \s\MYname  {Now, everyone just calm down...}
+  \s\MYtext  {I use my training as a negotiator to defuse an escalating situation.}
+  \s\MYeffect  {Use your training as a negotiator to defuse an escalating situation.  No one who can hear you may take violent actions for 5 minutes. This ability has a one hour cool down before it can be used a second time. (x2)}
+  %Avatar
+}
+
+\NEW{Abil}{\aLargerPurpose}{
+  \s\MYname  {Larger purpose}
+  \s\MYtext  {I use my resolve to serve humanity in order to resist your manipulation.}
+  \s\MYeffect  {If a social ability or command under enslavement would cause you to neglect or act against the greater good of huamnity as you see it, that ability or command does not affect you. (Unlimited)}
+  %Leader
+}
+
+%\NEW{Abil}{\aEndsJustify}{
+%  \s\MYname  {The ends justify the means}
+%  \s\MYtext  {I convince you to see the larger picture and work towards the greater good even if there is some lesser evil involved.}
+%  \s\MYeffect  {Convince someone to take a non-combat action they wouldn't otherwise take by describing the eventual good that will come from it.  This ability is not expended if the target counters it with another social ability. (x1)}
+%  %Dema
+%}
+
+\NEW{Abil}{\aExpertNegotiator}{
+  \s\MYname  {Expert negotiator}
+  \s\MYtext  {I can tell with certainty when someone lies to me.}
+  \s\MYeffect  {By studying someone's expression and body language as they make a statement, you can determine whether they were lying.  If you were able to hear and see the player as they made the statement, you may immediately ask the player whether the statement was true to the best of their character's knowledge. The player must respond with an honest out-of-game statement. (x3)}
+  %Diplomat
+}
+
+\NEW{Abil}{\aForScience}{
+  \s\MYname  {For science!}
+  \s\MYtext  {You are now fascinated with this research question.}
+  \s\MYeffect  {Identify a research question.  For 5 minutes (10 minutes for scientists or anyone with the Collaborate ability), all listeners are fascinated with the question and must help you investigate. (x3)}
+  %AziScientist
+}
+
+\NEW{Abil}{\aMomentOfClarity}{
+  \s\MYname  {Moment of clarity}
+  \s\MYtext  {I impress you with my gravity by dropping my normally insane flair.}
+  \s\MYeffect  {By suddenly dropping your insane flair, you can lend credence to a statement.  By delivering a statement calmly and clearly, you can convince listeners of its validity for 5 minutes, 10 for scientific facts. (x3)}
+  %MadScientist
+}
+
+\NEW{Abil}{\aStudyHistory}{
+  \s\MYname  {Those who don't study history...}
+  \s\MYtext  {I invoke the memory of my great-grandfather's accident in order to discourage irresponsible science.}
+  \s\MYeffect  {By invoking the memory of your great-grandfather's accident, you can prevent all listeners from performing or advocating irresponsible science for 5 minutes. (x3)}
+  %Granddaughter
+}
+
+\NEW{Abil}{\aRapidAssessment}{
+  \s\MYname  {Rapid Assessment}
+  \s\MYtext  {I can quickly analyze what is taking place around me.}
+  \s\MYeffect  {When an ability (social or otherwise) is used in your presence, you can detect it even if you wouldn't otherwise be able to.  The player using the ability must show you its full text. (x3)}
+  %Romeo
+}
+
+\NEW{Abil}{\aInsubordination}{
+  \s\MYname  {Insubordination}
+  \s\MYtext  {I can briefly resist compulsion by enslavement.}
+  \s\MYeffect  {Through extreme determination, you can hold off enslavement for a little while.  When you would be enslaved, you can delay the enslavement by up to 1 minute.  After that minute, you will be enslaved as normal (for a reduced duration of 4 minutes). (x3)}
+  %MiniEarth
+}
+
+\NEW{Abil}{\aDontMindMe}{
+  \s\MYname  {Don't mind me...}
+  \s\MYtext  {I play up my low rank to look very small and inconspicuous (but still visible). You forget I'm even around.}
+  \s\MYeffect  {You're just a little air elemental who doesn't know anyone and doesn't want to get in the way.  By looking unimposing, you can cause others to continue a conversation as if you weren't present. (x3)}
+  %MiniAir
+}
+
+\NEW{Abil}{\aUsefulRunt}{
+  \s\MYname  {What a useful little runt}
+  \s\MYtext  {I gain some surprising insights, seemingly through luck and obliviousness.}
+  \s\MYeffect  {You never let a little problem like not knowing what you're doing get in the way of getting things done.  Whenever you or someone you are working with are having trouble getting something done, you can ask a GM for advice. (x3)}
+  %MiniWater
+}
+
+
+
+
+

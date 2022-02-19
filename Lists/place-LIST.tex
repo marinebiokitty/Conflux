@@ -1,0 +1,114 @@
+%%%%%
+%%
+%% This file sets up the Place datatype and creates Place macros.
+%% Places correspond to general units of game that are not characters.
+%% Generally, game elements that do not come in some character's
+%% packet are owned by places.  A Place macro may contain zero or more
+%% of any kind of element (most likely Sign and Item macros).
+%%
+%% The simplest case is a single Place macro, \pWorld{}, which
+%% contains all miscellaneous game elements not owned by a character.
+%% However, Place macros are a good way to sort game area by general
+%% location or similar.  Place may also be used as a base for more
+%% complex and specific subtypes.
+%%
+%% Places do not necessarily correspond to only locations; you could
+%% set up a series of Place macros that each represent a time period
+%% in which certain elements are to be introduced into game.
+%%
+%%%%%
+
+\errorcontextlines=10
+
+\DECLARESUBTYPE{Place}{Owner}
+\PRESETS{Place}{
+  \FD\MYwhere	{} %% if a Place is a single identifiable location
+  \FD\MYwhen	{} %% if a Place is time-based
+  }
+\POSTSETS{Place}{
+  \edef\mylocation{\MYwhere}
+  \protected@edef\@ownerstring{%
+    \MYname%
+    \ifx\mylocation\empty\else\ (\mylocation)\fi%
+    \ifx\MYwhen\empty\else\ (\MYwhen)\fi%
+    }
+  }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\NEW{Place}{\pTest}{
+%  \s\MYname	{Test Place}
+%  \s\MYsigns	{\sTest{}}
+%  \s\MYitems	{\iTest{}\iWhatzit{}}
+%}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NEW{Place}{\pGM}{
+  \s\MYname {Owned by GMs}
+  \s\MYsigns{{\multi{12}{\sLocationCoverSheet{} \sSealedLocationSheet{}}} \sConduitOne{} \sConduitTwo{} \sConduitThree{} \sConduitFour{} \sConduitFive{} \sConduitSix{} \sConduitSeven{} \sConduitEight{} \sConduitNine{} \sConduitTen{} \sConduitEleven{} \sConduitTwelve{} \sConduitThirteen{} \sConduitFourteen{} \sConduitFifteen{} \sConduitSixteen{} \sConduitSeventeen{} \sConduitEighteen{}}
+  \s\MYgreens{}
+  \s\MYitems  {\iCart{} \iCart{}}
+} %% GMS have copy of critical items in case they get lost.
+  
+\NEW{Place}{\pCellar}{
+  \s\MYname	{Room -004}%%Cellar, Earth HQ
+  \s\MYsigns	{\sMalachite{} \sGeodes{} \sWineRack{} \sWineRack{} \sBarrel{} \sRockSlide{} \sStorageLocker{} \sToolShelf{}}
+}
+
+\NEW{Place}{\pGDLab}{
+  \s\MYname	{Room -002}%%near human HQ
+  \s\MYsigns	{\sBatterySource{} \sGDLab{} \sRaidGD{} \sGDLabChair{} \sGDLabBench{} \sHighResMass{} \sScale{}}
+  \s\MYitems	{\iHolographicLaser{}}
+}
+  
+\NEW{Place}{\pAziLab}{
+  \s\MYname	{Room -002}%%near human HQ
+  \s\MYsigns	{\sBatterySource{} \sSciLab{} \sRaidSci{} \sTransmogrifier{} \sAziSciLabBench{}  \sPeriodicTable{} \sDistilling{}}
+  \s\MYitems	{}
+  }
+  
+\NEW{Place}{\pHumanHeadQuarters}{
+  \s\MYname	{Room -002}%%human HQ
+  \s\MYsigns	{\sMap{}}
+  \s\MYitems	{}
+  } 
+  
+\NEW{Place}{\pAirTower}{
+  \s\MYname	{Hall off of -002}
+	\s\MYsigns	{\sPileOfShiny{} \sWindy{} \sDestroyedWall{}}
+  \s\MYitems	{}
+  }
+  
+\NEW{Place}{\pLabRuins}{
+  \s\MYname	{across from -004}%%spa
+	\s\MYsigns	{\sPileOfTools{} \sOrganizerBox{} \sRubble{} \sWall{}}
+  \s\MYitems	{\iVanDeGraaff{}}%%Items to be hidden physically in the area
+  }
+  
+\NEW{Place}{\pMSLab}{
+  \s\MYname	{-015}%%Locked door from demagogue
+	\s\MYsigns	{\sBatterySource{} \sLockedDoor{} \sMSLab{} \sRaidMS{} \sCoffeeMachine{} \sMSLabBench{}}
+	\s\MYgreens {}
+  \s\MYitems	{}
+  }
+  
+\NEW{Place}{\pKitchen}{
+  \s\MYname	{-030}%%Fire HP
+	\s\MYsigns	{\sSink{} \sRefrigerator{} \sFreezer{} \sKitchenCabinet{} \sFruitBowl{} \sWindow{} \sLavaPool{} \sTable{}}
+  \s\MYitems	{}
+  }
+  
+\NEW{Place}{\pPond}{
+  \s\MYname	{-032}%%Water HQ
+	\s\MYsigns	{\sWaterPond{} \sStream{} \sWillow{} \sStables{} \sMeditation{}}
+  \s\MYitems	{}
+  }
+  
+\NEW{Place}{\pGardens}{
+  \s\MYname	{-013}%%Gathering space
+	\s\MYsigns	{\sJanitorCloset{} \sRoseBush{} \sFountain{} \sAbilitySource{}}
+  \s\MYitems	{}
+  }

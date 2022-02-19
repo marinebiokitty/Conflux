@@ -1,0 +1,633 @@
+%%%%%
+%%
+%% This file creates the Item, ItemPacket, ItemFold, ItemEnvelope, and
+%% ItemLabel datatypes, and creates macros for each.  These are for
+%% various types of in-game items.
+%%
+%%%%%
+
+
+%%%%%
+%% Item macros are for normal item cards.
+\DECLARESUBTYPE{Item}{TransElement}
+\PRESETS{Item}{
+  \FD\MYtext	{} %% longer text of item
+  \FD\MYmark	{} %% possible contents of shaded ``mark'' on card
+  \FD\MYbulky	{0} %% potential bulkiness
+  \FD\MYcapacity{N/A} %% potential capacity
+  \sd\MYlistmap	{\item\MYname\ifx\MYnumber\empty\else\ (\MYnumber)\fi}
+  }
+
+
+%%%%%
+%% \prop
+%% \unstash
+%% \bulky{<number>}
+%% \contain{<number>}
+%%
+%% \prop inside an Item macro labels the card as a prop.  \unstash
+%% labels the card as unstashable.  \bulky{n} labels the card as
+%% n-hands bulky.  \contain{n} labels the card with n-hands capacity.
+\def\prop{%
+  \append\MYmark{ ~PROP~ }}
+\def\unstash{%
+  \append\MYmark{ ~UNSTASHABLE~ }}
+\def\bulky#1{%
+  \s\MYbulky{#1}%
+  \append\MYmark{\mbox{ ~\MYbulky-Hand~Bulky~ }}}
+\def\contain#1{%
+  \s\MYcapacity{#1}%
+  \append\MYmark{\mbox{ ~\MYcapacity-Hand~Capacity~ }}}
+\def\physrepped#{%
+  \append\MYmark{ ~PHYSREPPED~ }}
+\def\tricorder#1{%
+  \append\MYmark{\mbox{ ~($\gamma=#1$)~ }}}
+
+%%%%%
+%% ItemPacket macros are for item cards with an attached packet.
+%% They are a subtype of Item.
+\DECLARESUBTYPE{ItemPacket}{Item}
+\PRESETS{ItemPacket}{
+  \F\MYcontents
+  }
+
+
+%%%%%
+%% ItemFold macros are for items represented by just a folded packet.
+%% They are a subtype of ItemPacket, with the longer text and ``mark''
+%% left blank, since they have no actual item card.
+\DECLARESUBTYPE{ItemFold}{ItemPacket}
+\PRESETS{ItemFold}{
+  \s\MYmark{}
+  }
+
+
+%%%%%
+%% ItemEnvelope macros are for items represented by just an envelope.
+%% They are a subtype of ItemPacket, with the longer text and ``mark''
+%% left blank, since they have no actual item card.
+\DECLARESUBTYPE{ItemEnvelope}{ItemPacket}
+\PRESETS{ItemEnvelope}{
+  \s\MYmark{}
+  }
+
+
+%%%%%
+%% ItemLabel macros are for small labels that would get used on
+%% physreps, e.g. gun labels.  The ``mark'' is left blank, since
+%% it isn't used for these.
+\DECLARESUBTYPE{ItemLabel}{Item}
+\PRESETS{ItemLabel}{
+  \s\MYmark{}
+  }
+
+
+%%%%%
+%% \icard[<extras>]{<name>}{<number>}{<text>}
+%% \specialicard[<extras>]{<name>}{<number>}{<text>}{<mark>}
+%% \itempacket[<extras>]{<name>}{<number>}{<text>}{<mark>}{<contents>}
+%% \itemfold{<name>}{<number>}{<text>}{<contents>}
+%% \itemenvelope{<name>}{<number>}{<text>}{<contents>}
+%% \itemlabel{<name>}{<number>}{<text>}
+%%
+%% These are wrappers around \INSTANCE, useful for 1-shots.
+%%
+%% For \icard, \specialicard, and \itempacket, the optional <extras>
+%% (in []'s) is for things like \unstash and \bulky{3}.  For example,
+%% \icard[\prop\contain{2}]{..}{..}{..}{..} gives an item that has a
+%% prop and 3-hands capacity.
+%%
+%% The last arg (#5) to \specialicard is for anything extra you may
+%% want in the ``mark''
+\newinstance{Item}{\icard[4][]}{
+  \s\MYname{#2}\s\MYnumber{#3}\s\MYtext{#4}#1}
+\newinstance{Item}{\specialicard[5][]}{
+  \s\MYname{#2}\s\MYnumber{#3}\s\MYtext{#4}\s\MYmark{#5}#1}
+\newinstance{ItemPacket}{\itempacket[6][]}{
+  \s\MYname{#2}\s\MYnumber{#3}\s\MYtext{#4}\s\MYmark{#5}\s\MYcontents{#6}#1}
+\newinstance{ItemFold}{\itemfold[4]}{
+  \s\MYname{#1}\s\MYnumber{#2}\s\MYtext{#3}\s\MYcontents{#4}}
+\newinstance{ItemEnvelope}{\itemenvelope[4]}{
+  \s\MYname{#1}\s\MYnumber{#2}\s\MYtext{#3}\s\MYcontents{#4}}
+\newinstance{ItemLabel}{\itemlabel[3]}{
+  \s\MYname{#1}\s\MYnumber{#2}\s\MYtext{#3}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\NEW{Item}{\iTest}{
+%  \s\MYname	{Test Item}
+%  \s\MYnumber	{0000}
+%  \s\MYtext	{A Test Item Card}
+%  }
+%
+%\NEW{ItemPacket}{\iTestPacket}{
+%  \s\MYname	{Test Item}
+%  \s\MYnumber	{0000}
+%  \s\MYtext	{A Test Item with a big red button.  Open packet if
+%		you press the big red button.}
+%  \s\MYcontents	{The item beeps at you.}
+%  }
+%
+%\NEW{ItemFold}{\iTestFold}{
+%  \s\MYname	{Test Food}
+%  \s\MYnumber	{0000}
+%  \s\MYtext	{open if you eat}
+%  \s\MYcontents	{It tastes yummy.}
+%  }
+%
+%\NEW{ItemEnvelope}{\iTestEnvelope}{
+%  \s\MYname	{Test Food}
+%  \s\MYnumber	{0000}
+%  \s\MYtext	{open if you eat}
+%  \s\MYcontents	{It tastes yummy.}
+%  }
+%
+%\NEW{ItemLabel}{\iTestLabel}{
+%  \s\MYname	{Test Gun Label}
+%  \s\MYnumber	{0000}
+%  \s\MYtext	{Disc gun, loadable to 20 shots.}
+%  }
+%
+%\NEW{Item}{\iWhatzit}{
+%  \s\MYname	{Whatzit}
+%  \s\MYnumber	{12345}
+%  \s\MYtext	{If you press it, open packet a.  If you twirl it, open
+%		packet b.  If you pull it, open packet c.}
+%  \bulky	{1}
+%  \s\MYsigns	{\signstrip{a}{it goes ``beep.''}
+%		\signstrip{b}{it goes ``whoop.''}
+%		\signstrip{c}{it goes ``bang.''}
+%		}
+%  \s\MYabils	{\ability{Stop Crying}{By futzing with the Whatzit, you
+%		can make babies stop crying.}{I make the baby stop
+%		crying.}
+%		}
+%  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%-----------------------------%%%
+%
+% Items are organized by "`owned by a person at start game" and "somewhere in world"
+% Withing "`person items"', organized by character
+% Within "`somewhere in world"', organized by quest/mechanic
+% There are also a list of fluff items at the very bottom that have no mechanical purpose
+%
+%%%-----------------------------%%%
+
+
+\def\iWhiteNumber#{543}
+
+%%Items that belong to people at game start:
+  
+\NEW{Item}{\iWhitePowder}{%%Azi Sci
+  \s\MYname     {Mysterious White Powder}
+  \s\MYnumber   {\iWhiteNumber{}}
+  \s\MYtext     {You do not know what this substance is.}
+  \unstash{}
+  \tricorder{5}
+}
+
+\NEW{Item}{\iPuddle}{%%MiniWater
+  \s\MYname	{Puddle of Water}
+  \s\MYnumber	{711}
+  \s\MYtext	{{\large --BOUND--} There is a substantial puddle of water on the floor. I hope no one slips in it.
+  This item is not transferable on its own, and may not be picked up or moved except with a bucket, bowl, or other container.}
+  \tricorder{2}
+}
+
+\NEW{Item}{\iNoteWaterEarth}{%%GD
+\s\MYname  {A Soggy Note Painted on Fabric}
+%\s\MYnumber {629} (the item is already very big, and the # serves no purpose)
+\s\MYtext   {Earth Elementals:
+\\
+I am writing this message in some desperation. One of my youngest elementals was recently attacked in a most brutal fashion. He has since died from the injuries he sustained during the attack. We  have no idea who perpetrated the crime. 
+When word reached us of \cEarthKing{}'s illness, I began to suspect that even fouler things were afoot. I believe that someone deliberately violated one of my subjects in order to obtain \iWaterEssence{}. A sufficiently powerful elemental could use the essence to make a deadly, slow acting poison. I suspect that this is what ails your king.
+\\
+Please accept this note as a sign of water's good will and help us get to the bottom of this mystery.
+\\
+Sincerely,\\
+\cWaterQueen{}, Queen of All Water
+}
+  \tricorder{2}
+}
+
+\NEW{Item}{\iOlympus}{%%Rogue and Loyal
+  \s\MYname	{A Sample of the Earth King's Blood}
+  \s\MYnumber	{711}
+  \s\MYtext	{This is a sample of \cEarthKing{}'s blood. Maybe an analysis could help determine what is wrong with him.}
+  \tricorder{2, 4}
+}
+
+\NEW{Item}{\iHalfGeode}{%%Rogue and Loyal
+  \s\MYname	{Half of a White Geode}
+  \s\MYnumber	{213}
+  \s\MYtext	{This is half of a white geode.  It feels unusually dense.}
+  \tricorder{3}
+}
+
+\NEW{Item}{\iElectromagnet}{%%GD
+  \s\MYname     {A Large Electromagnet}
+  \s\MYnumber   {122}
+  \s\MYtext     {A bulky torus made of tightly-coiled wire.}
+  \physrepped{}
+  \bulky{1}
+  \unstash{}
+}
+
+\NEW{Item}{\iNoteNatGD}{%%GD
+\s\MYname  {A Note}
+%\s\MYnumber {690} (the item is already very big, and the # serves no purpose)
+\s\MYtext   {\emph{This is the letter that blew into your bedroom through an open window, scrawled in crude, childlike handwriting by someone who quite clearly only recently learned how to write.  It reads:}\\
+Dear \cGD{\intro},
+\\
+My Name is \cNaturalist{}.  I am an Air Elemenntal, and a Naturalist who Studees Humans.  I have Hearrd about your Work Studeeing Elemenntals, and that You will be Presennt at the Elemenntal Conference.  I would be Innterested in Learning More about your Reesearch, and hope to Be able to Speek with you and Share our Knowlege.
+\\
+Sincerely,\\
+\cNaturalist{}
+}
+  \tricorder{4}
+}
+
+\NEW{Item}{\iNoteNatAziSci}{%%AziSci
+\s\MYname  {A Note}
+%\s\MYnumber {740} (the item is already very big, and the # serves no purpose)
+\s\MYtext   {\emph{This is the letter that blew into your bedroom through an open window, scrawled in crude, childlike handwriting by someone who quite clearly only recently learned how to write.  It reads:}\\
+Dear \cScientist{\intro},
+\\
+My Name is \cNaturalist{}.  I am an Air Elemenntal, and a Naturalist who Studees Humans.  I have Hearrd about your Work Studeeing Elemenntals, and that You will be Presennt at the Elemenntal Conference.  I would be Innterested in Learning More about your Reesearch, and hope to Be able to Speek with you and Share our Knowlege.
+\\
+Sincerely,\\
+\cNaturalist{}
+}
+\tricorder{4}
+}
+
+\NEW{Item}{\iTablet}{%%MS
+  \s\MYname	{A Stone Tablet}
+  %\s\MYnumber	{860}
+  \s\MYtext		{\emph{This is a heavy stone tablet, with writing inscribed into it.  It reads:}\\
+  To Dr. \cMS{\intro}:\\
+  While you may not recall meeting me, I certainly remember encountering you and a friend of yours a few years ago.  Your friend was fantastically persuasive.  I think that kind of talent could be very useful.
+  \\
+  Now, while my initial involvement in your experiment was involuntary, and my big brother kind of interrupted you, I'm really interested in related technology that you're developing.  I'd love to help.  I might even keep quiet
+  if you teach me about how to use it.  Thanks!
+  \\
+  \cMinion{}
+  }
+  \physrepped{}
+  \bulky{1}
+  \tricorder{3}
+}
+
+\NEW{Item}{\iAziTape}{%%MS
+  \s\MYname	{Flash Drive}
+  \s\MYnumber	{151}
+  \s\MYtext	{A flash drive. Contact a GM if you have a way to determine what is on it.}
+  \unstash{}
+  %\bulky{1}
+}
+
+%%Tricorder, need to rename??
+\NEW{Item}{\iTricorder}{%%GD and MS
+  \s\MYname	{Tricorder}
+  \s\MYnumber	{674}
+  \s\MYtext	{A small, hand-held machine. This machine is designed to collect data on elementals in various ways. Refer to the associated research notebook for current functionality, and ways to develop additional functionality.}
+  \physrepped{}
+}
+
+%%leader's anti enslavement shield. he can of course give it to whoever he chooses
+\NEW{Item}{\iEleShield}{%%Leader (Enslavement Resist Item)
+  \s\MYname	{A Metal Bracelet}
+  \s\MYnumber	{590}
+  \s\MYtext	{There are a bunch of blinking lights, sort of like a watch.}
+  \unstash{}
+}
+
+\NEW{Item}{\iVest}{%%Leader
+  \s\MYname	{A bullet-proof vest}
+  \s\MYnumber	{591}
+  \s\MYtext	{Gives +1CR to the wearer.}
+  \unstash{}
+}
+
+%%Lab key door for MS lab. Dema and Romeo also have copies
+\NEW{Item}{\iLabKey}{%%MS and Dema
+  \s\MYname	{A Key}
+  \s\MYnumber	{400}
+  \s\MYtext	{This key allows you to pass freely in and out of room -015.}
+}
+
+\NEW{ItemFold}{\iEleBelt}{%%Romeo
+  \s\MYname	{A Heavy Metal Belt}
+  \s\MYnumber	{866}
+  \s\MYtext	{A metal belt with blinking lights on it. {\bf Do not open unless directed to do so.}}
+  \s\MYcontents {{\bf The elemental shield is now operational} and grants +3CR to defense against elementals who attack you. The item can be used by any human, although it provides \emph{no defense} against elemental enslavement.}
+}
+
+%%Elemental Essences
+\NEW{Item}{\iFireEssence}{%%Fire Eles
+  \s\MYname	{Fire Elemental Essence}
+  \s\MYnumber	{561}
+  \s\MYtext	{{\large --BOUND--} This is a piece of fire elemental essence. 
+  It is not transferable unless a mechanic specifically allows the transfer of Elemental Essence, or the owner dies --- in which case the essence becomes in-game transferable (in both cases, owner should cross out ``BOUND'').}
+  %\tricorder{1}
+}
+
+\NEW{Item}{\iEarthEssence}{%%Earth Eles
+  \s\MYname	{Earth Elemental Essence}
+  \s\MYnumber	{349}
+  \s\MYtext	{{\large --BOUND--} This is a piece of earth elemental essence. 
+  It is not transferable unless a mechanic specifically allows the transfer of Elemental Essence, or the owner dies --- in which case the essence becomes in-game transferable (in both cases, owner should cross out ``BOUND'').}
+  %\tricorder{3}
+}
+
+\NEW{Item}{\iAirEssence}{%%Air Eles
+  \s\MYname	{Air Elemental Essence}
+  \s\MYnumber	{829}
+  \s\MYtext	{{\large --BOUND--} This is a piece of air elemental essence. 
+  It is not transferable unless a mechanic specifically allows the transfer of Elemental Essence, or the owner dies --- in which case the essence becomes in-game transferable (in both cases, owner should cross out ``BOUND'').}
+  %\tricorder{4}
+}
+
+\NEW{Item}{\iWaterEssence}{%%Air Eles
+  \s\MYname	{Water Elemental Essence}
+  \s\MYnumber	{313}
+  \s\MYtext	{{\large --BOUND--} This is a piece of water elemental essence. 
+  It is not transferable unless a mechanic specifically allows the transfer of Elemental Essence, or the owner dies --- in which case the essence becomes in-game transferable (in both cases, owner should cross out ``BOUND'').}
+  %\tricorder{2}
+}
+
+\NEW{Item}{\iQEssence}{%%Q Eles
+  \s\MYname	{Quintessence Elemental Essence}
+  \s\MYnumber	{529}
+  \s\MYtext	{{\large --BOUND--} This is a piece of quintessence elemental essence. 
+ It is not transferable unless a mechanic specifically allows the transfer of Elemental Essence, or the owner dies - in which case the essence becomes in-game transferable (in both cases, owner should cross out ``BOUND'').}
+ %\tricorder{5}
+}
+
+
+%%Items that start in game locations. Organized by mechanic/quest:
+%%Conduit
+\NEW{Item}{\iCart}{%%Freezer
+  \s\MYname     {A big, complicated machine}
+  \s\MYnumber   {821}
+  \s\MYtext     {This machine is big and complicated}
+  \s\MYgreens {\gConduitCover{}}
+}
+
+%%Avatar quest item
+\NEW{ItemFold}{\iMintIceCream}{%%Freezer
+  \s\MYname     {Mint Chocolate-Chip Ice Cream}
+  \s\MYnumber   {880}
+  \s\MYtext     {Open if you eat.}
+  \s\MYcontents {Mm, minty chocolately goodness.}
+}
+
+%%Battery Making mechanic
+
+\NEW{Item}{\iBattery}{%%Chemical Stock Rooms (3)
+  \s\MYname	{A Small Battery}
+  \s\MYnumber	{717}
+  \s\MYtext	{This battery can provide power to a machine for a few minutes.}
+}
+
+%%Sealing the Conduit Locations Items
+\NEW{Item}{\iLockTight}{%%Janitors Closet
+  \s\MYname	{A Small Container of Purple Goo}
+  \s\MYnumber	{998}%%Renumber later please
+  \s\MYtext	{This purple goo is used for locking the threads of a screw so it doesn't loosen over time.}
+}
+
+%%Unsealing Conduit locations items
+\NEW{Item}{\iBowl}{%%Kitchen Cabinet | Kitchen
+  \s\MYname	{A Large Bowl}
+  \s\MYnumber	{827}
+  \s\MYtext	{This is a large bowl. It is 1-hand bulky when empty, but {\bf 2-hand bulky when full}.}
+  \bulky{1- or 2}
+}
+
+\NEW{Item}{\iLye}{%%JanitorCloset | Garden
+  \s\MYname	{A Bottle of Lye}
+  \s\MYnumber	{281}
+  \s\MYtext	{Lye is a caustic cleaning chemical. You should be careful when carrying it. (You may not run while carrying this item.)}
+  \bulky{1}
+}
+
+%%GD fetch items
+\NEW{Item}{\iWireTightener}{%%Rogue, Janitors Closet
+  \s\MYname	{A Wire Tightener}
+  \s\MYnumber	{888}
+  \s\MYtext	{This is a wire tightener, it tightens wires.}
+  \unstash{}
+}
+
+\NEW{Item}{\iTungsten}{%%PileOfShiny | air HQ
+  \s\MYname	{A Spool of Tungsten Wire}
+  \s\MYnumber	{516}
+  \s\MYtext	{This is a small spool of shiny Tungsten Wire. It is fairly conductive but gets very hot when electricity is run through it.}
+  \unstash{}
+}
+
+\NEW{Item}{\iWireStripper}{%%Pile of Tools | lab ruins
+  \s\MYname	{A Pair of Wire Strippers}
+  \s\MYnumber	{289}
+  \s\MYtext	{These wire strippers can be used to strip insulation from a wire to facilitate connecting wires.}
+  \unstash{}
+}
+
+\NEW{Item}{\iSiliconeMitt}{%%Pile of Tools | lab ruins
+  \s\MYname	{A Silicone Oven Mitt}
+  \s\MYnumber	{303}
+  \s\MYtext	{This oven mitt is useful for protecting yourself from heat.}
+}
+
+\NEW{Item}{\iPhaseTransducer}{%%GD Lab Bench | GD Lab
+  \s\MYname	{A Phase Transducer}
+  \s\MYnumber	{325}
+  \s\MYtext	{This phase transducer is used to couple some technologies to the mesionic sensor grid. You must ring the bell whenever it is being used.}
+  \physrepped{}
+  \bulky{1}
+}
+
+%%AziSci quest items
+\NEW{Item}{\iVanDeGraaff}{%%physically hidden | Lab Ruins
+  \s\MYname	{A Van de Graaff Generator}
+  \s\MYnumber	{527}
+  \s\MYtext	{This generator is old but looks like it should still work.}
+  \bulky{2}
+  \unstash{}
+}
+
+\NEW{Item}{\iAluminum}{%%pile of shiny | Air HQ
+  \s\MYname	{An Aluminum Rod}
+  \s\MYnumber	{211}
+  \s\MYtext	{A light-weight aluminum rod.}
+  \unstash{}
+}
+
+\NEW{Item}{\iPhotodiode}{%%organizing box | Lab Ruins
+  \s\MYname	{A Photodiode}
+  \s\MYnumber	{942}
+  \s\MYtext	{A small electronic piece designed to emit light.}
+  \unstash{}
+}
+
+\NEW{ItemFold}{\iWhite}{%%Azi Sci
+  \s\MYname	{Elementium (inert)}
+  \s\MYnumber	{\iWhiteNumber{}}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents	{
+  
+  If this is inert or you are human: Yuck, this powder leaves a bad taste in your mouth but there are no other effects.
+  
+  If you are an elemental, and the ``inert'' has been crossed out: +1CR for 10 minutes. You feel extremely amiable toward the person who gave you this. \textbf{You can no longer enslave this person, and you cannot attack them unless provoked.} If you are a wounded elemental, administering Elementium heals you. You are now just knocked out.
+  }
+  \unstash{}
+  \tricorder{5}
+}
+
+\NEW{ItemFold}{\iWhiteQ}{%%Avatar
+  \s\MYname	{Amaranth}
+  \s\MYnumber	{\iWhiteNumber{}}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents	{If you are human: Yuck, this powder leaves a bad taste in your mouth but there are no other effects.
+  
+  If you are an elemental: +1CR for 10 minutes. You feel extremely amiable toward the person who gave you this. \textbf{You can no longer enslave this person, and you cannot attack them unless provoked.} If you are a wounded elemental, administering Amaranth heals you. You are now just knocked out.
+  }
+  \unstash{}
+  \tricorder{5}
+}
+
+%%MS item fetch quest
+\NEW{Item}{\iCoffeeMug}{%%CoffeeMachine | MS lab
+  \s\MYname	{A Coffee Mug}
+  \s\MYnumber	{144}
+  \s\MYtext	{This coffee mug is full of freshly-brewed coffee.}
+  \bulky{1}
+  \physrepped{}
+}
+
+\NEW{Item}{\iControlRod}{%%Control rod for mad scientist
+  \s\MYname	{Prototype Handheld Device}
+  \s\MYnumber	{699}
+  \s\MYtext	{A large metallic rod with dials, flashing lights, and electrical wiring all over it.  It's not even clear how to hold it without getting electrocuted...}
+  \bulky{1}
+  \physrepped{}
+}
+
+%%Romeo Item Quest
+\NEW{Item}{\iHeisenbergCompensator}{%%GD lab bench and Azi Sci lab bench | GD Lab, AziLab
+  \s\MYname	{Heisenberg Compensator}
+  \s\MYnumber	{617}
+  \s\MYtext	{This is a very advanced looking piece of technology.  You are impressed by the scientists who created it.}
+  \bulky{1}
+  \unstash{}
+}
+
+\NEW{ItemFold}{\iCrystalGeode}{%%Pile Of Rocks (sGeodes) | Cellar  %%Can be used as a battery with help from an earth Elemental
+  \s\MYname	{A Grey Rock}
+  \s\MYnumber	{692}
+  \s\MYtext	{A heavy, spherical piece of rock; it is ugly, grey, and pitted. {\bf If you would like to break it open, hit it with a CR 4+ attack. If you do so, open the item}}
+  \s\MYcontents {You break open the stone and see that {\bf it is indeed a Geode}. It has a polished interior, deep blue with brilliant crystals.}
+  \bulky{1}
+}
+
+\NEW{ItemFold}{\iRocks}{%%Pile Of Rocks (sGeodes) | Cellar
+  \s\MYname	{A Grey Rock}
+  \s\MYnumber	{911}
+  \s\MYtext	{A heavy, spherical piece of rock; it is ugly, grey, and pitted. {\bf If you would like to break it open, hit it with a CR 4+ attack. If you do so, open the item.}}
+  \s\MYcontents {You break open the stone and see that {\bf it is not a Geode}. It is just a dull, solid rock.}
+  \bulky{1}
+}
+\NEW{Item}{\iLavaEmber}{%%Lava Pool | Kitchen %%Can be used as a battery with help from a fire elemental
+  \s\MYname	{Lava Ember}
+  \s\MYnumber	{712}
+  \s\MYtext	{A palm-sized piece of stone that glows deep orange and feels warm to the touch.}
+  \bulky{1}
+}
+
+\NEW{Item}{\iHandCrank}{%%?? | Air HQ %%Can be used as a battery with help from an air elemental
+  \s\MYname	{A Hand Crank}
+  \s\MYnumber	{713}
+  \s\MYtext	{A small hand crank.}
+  \bulky{1}
+}
+
+\NEW{Item}{\iHolographicLaser}{%%Physically in lab space (no sign) | GD Lab
+  \s\MYname	{Holographic Laser}
+  \s\MYnumber	{723}
+  \s\MYtext	{A huge, fancy-looking piece of equipment that hulks in its corner.  It makes a whirring noise when it is turned on, and then shoots out a bright green beam that has no effect unless you know otherwise.}
+  \bulky{3}
+}
+
+%%Airplane Plot
+\NEW{Item}{\iAirplanePiece}{%%Azi Lab Bench (can't carry it around) | Azi Lab
+  \s\MYname	{Airplane Fragment}
+  \s\MYnumber	{802}
+  \s\MYtext	{A twisted, scorched piece of metal from one of the airplanes that may have crashed due to elemental interference.}
+  \bulky{2}
+  \tricorder{4}
+}
+
+%%Naturalist Research humans notebook
+\NEW{ItemFold}{\iApple}{%%Fruit Basket | Kitchen
+  \s\MYname	{A Red Apple}
+  \s\MYnumber	{155}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents{Yummy. You feel like you have lots of energy now.}
+}
+
+\NEW{ItemFold}{\iBanana}{%%Fruit Basket | Kitchen
+  \s\MYname	{A Yellow Banana}
+  \s\MYnumber	{797}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents{Yummy. You feel like you have lots of energy now.}
+}
+
+\NEW{ItemFold}{\iTangerine}{%%Fruit Basket | Kitchen
+  \s\MYname	{An Orange Tangerine}
+  \s\MYnumber	{269}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents{Yummy. You feel like you have lots of energy now.}
+}
+
+\NEW{ItemFold}{\iPear}{%%Fruit Basket | Kitchen
+  \s\MYname	{A Green Pear}
+  \s\MYnumber	{159}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents{Yummy. You feel like you have lots of energy now.}
+}
+
+\NEW{ItemFold}{\iCanOfBeans}{%%ToolShelf | Kitchen
+  \s\MYname	{A Can Of Beans}
+  \s\MYnumber	{250}
+  \s\MYtext	{Open if you eat}
+  \s\MYcontents{Yummy. You feel like you have lots of energy now.}
+}
+
+%%Flavor Text Items
+\NEW{ItemFold}{\iWine}{%%Wine Rack | Cellar
+  \s\MYname	{A Bottle of Wine}
+  \s\MYnumber	{845}
+  \s\MYtext	{Open if you drink}
+  \s\MYcontents{You feel tipsy for the next 5 minutes. Roleplay accordingly.}
+}
+
+\NEW{ItemFold}{\iMead}{%%Barrel | Cellar
+  \s\MYname	{A Flagon of Mead}
+  \s\MYnumber	{390}
+  \s\MYtext	{Open if you drink}
+  \s\MYcontents{You feel tipsy for the next 5 minutes. Roleplay accordingly.}
+}
+
+\NEW{Item}{\iBucket}{%%JanitorCloset | Garden
+  \s\MYname	{A Bucket}
+  \s\MYnumber	{279}
+  \s\MYtext	{This plastic bucket looks like it's used for cleaning. Perhaps you could carry water or other liquids in here.}
+  \physrepped{}
+  \bulky{1}
+}
+

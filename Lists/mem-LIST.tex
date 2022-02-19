@@ -1,0 +1,242 @@
+%%%%%
+%%
+%% This file sets up the Mem, MemFold, and MemEnvelope datatypes, and
+%% creates possible macros for each.
+%%
+%% The Mem datatype isn't really used directly; it's there so the
+%% other datatypes can inherit and share its code.
+%%
+%%%%%
+
+\DECLARESUBTYPE{Mem}{Element}
+\PRESETS{Mem}{
+  %% \MYname is the trigger
+  \F\MYtext	%%  text
+  }
+
+
+%%%%%
+%% MemFold and MemEnvelope are both subtypes of Mem.  MemFold is for
+%% fold-n-staple style mempackets, MemEnvelope is for stuff-n-seal
+%% style mempackets.  If you want a mempacket to contain interesting
+%% contents, like sheets, abilities, and other mempackets, use a
+%% MemEnvelope.
+\DECLARESUBTYPE{MemFold}{Mem}
+\DECLARESUBTYPE{MemEnvelope}{Mem}
+
+
+%%%%%
+%% MemCover and MemPage are for the cover and pages of mempacket
+%% booklets, which resemble research notebooks.  These are good
+%% substitutes for large piles of MemFolds, and can be useful for
+%% things like amnesiac characters.
+%%
+%% Like MemFolds, MemPages shouldn't directly own any other elements
+%% as contents.  Use MemEnvelope instead.
+%%
+%% MemPages are usually assigned to a MemCover (via \MYmems), with the
+%% MemCover representing the entire booklet and assigned to a
+%% character.
+%%
+%% A MemCover is not a mempacket in and of itself; its name is not its
+%% trigger and its text is not a memory.
+\DECLARESUBTYPE{MemCover}{Mem}
+\PRESETS{MemCover}{
+  \sd\MYtext	{Each page is a memory/event packet with a separate
+		trigger.}
+  }
+
+\DECLARESUBTYPE{MemPage}{Mem}
+
+
+%%%%%
+%% \memfold{<trigger>}{<text>}
+%% \memenvelope{<trigger>}{<text>}
+%% \memcover{<name>}{<pages>}
+%% \mempage{<trigger>}{<text>}
+%% \startmembook{<name>} <pages> \endmembook
+%%
+%% These are wrappers around \INSTANCE, useful as 1-shots.
+%% \startmembook...\endmembook is a simple wrapper around \memcover
+%% that may have better syntax for use within character sheets (inside
+%% a \starttag{mems}...\endtag block).
+\newinstance{MemFold}{\memfold[2]}{
+  \s\MYname{#1}\s\MYtext{#2}}
+\newinstance{MemEnvelope}{\memenvelope[2]}{
+  \s\MYname{#1}\s\MYtext{#2}}
+\newinstance{MemCover}{\memcover[2]}{
+  \s\MYname{#1}\s\MYmems{#2}}
+\newinstance{MemPage}{\mempage[2]}{
+  \s\MYname{#1}\s\MYtext{#2}}
+
+\long\def\startmembook#1#2\endmembook{\memcover{#1}{#2}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\NEW{MemFold}{\mTest}{
+%  \s\MYname	{Test Trigger}
+%  \s\MYtext	{This is a Test of a fold-n-staple memory packet}
+%  }
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NEW{MemCover}{\mStress}{
+  \s\MYname     {Stress}
+  \s\MYmems     {\mStressTime{},\mStressMSOne{},\mStressMSTwo{},\mStressEarth{},\mStressRetape{},
+                 \mStressOw{},\mStressExtreme{}, \mStressGotRetaped{}}
+} 
+
+
+\NEW{MemPage}{\mStressTime}{
+  \s\MYname     { Open two hours into game }
+  \s\MYtext     { This conference is exciting, and you're having a blast.  However, it's still pretty tiring.  The effort of keeping going and dealing with all these people is somewhat stressful. }
+  }
+
+\NEW{MemPage}{\mStressMSOne}{
+  \s\MYname     { Open when you interact with badge number 229 for at least three minutes}
+  \s\MYtext     { You recognize this \cMS{\human}, but you're not sure why. }
+  }
+
+\NEW{MemPage}{\mStressMSTwo}{
+  \s\MYname     { Open if you interact with badge number 229 a second time, for at least three minutes  }
+  \s\MYtext     { Your continued interaction with \cMS{} has triggered some kind of flashback.  
+  During the flashback, you are not aware of what is going on around you.  Stand still, eyes glazed, and unresponsive to outside stimuli, for two minutes.  (You are effectively Knocked Out, even though you have not collapsed.) }
+  }
+
+\NEW{MemPage}{\mStressEarth} {
+  \s\MYname     { Open if you interact with badge number 679}
+  \s\MYtext     { You feel a strange compulsion to take control of this elemental.  You issue a command to \cMinion{\them}, appropriate to the current situation.  If there are no immediately relevant commands, ask \cMinion{\them} to make you a sandwich.  The compulsion passes after you have made this command.  Obviously, this involuntary break in your self-control is stressful.  Roleplay accordingly. }
+  }
+
+\NEW{MemPage}{\mStressOw} {
+  \s\MYname    { Open if you are knocked out or wounded }
+  \s\MYtext    { That was a stressful event.  You didn't expect this conference to be so violent and dangerous! }
+}
+
+\NEW{MemPage}{\mStressRetape} {
+  \s\MYname     { Open if you hear anyone suggest forceful or dangerously fast retaping }
+  \s\MYtext     { Hell no!  There mere suggestion of such a thing is stressful.  You should object loudly and immediately. }
+}
+   
+\NEW{MemPage}{\mStressExtreme} {
+  \s\MYname     { Open if you have had a flashback and also have experienced at least two events described in this membook as ``stressful''}
+  \s\MYtext     { That was the last straw.  The excess stress at this event has gotten to you.  You are extremely anxious and jittery for the remainder of the conference.  Your fear of \cMS{} will cause you to flee from any room \cMS{\they} enters.  Further, you think that elementals will obey your every command.  Roleplay accordingly. }
+}
+
+\NEW{MemPage}{\mStressGotRetaped} {
+  \s\MYname     { Open if someone succeeds in retaping you }
+  \s\MYtext     { Well, they've succeeded in retaping you, but there are some unintended side effects.  You will follow orders, and be generally obedient to your new supervisor, 
+  but you are also now permanently insane and psychotic.  While you are obedient, you will do everything you can think of to be annoying that doesn't directly undermine your orders..  Further, you should also take every 
+  opportunity to screw up everything for everybody.  If you can find a way to cause a war or destroy the world, go for it.  Any ongoing or future consequences of stressful events have no further effect on 
+  your mental status. }
+}
+
+\NEW{MemFold}{\mGDCollaboration}{
+  \s\MYname	{C Packet}
+  \s\MYtext	{From your conversation, you've made some deductions about what \cGD{} is working on. The device she is developing is an electromagnet that is capable of attracting elementals. It is a very potent device and, with a strong enough power source, it might even be able to pull them in over vast distances. You suspect it is designed to be hooked up to the Conduit.}
+  }
+  
+\NEW{MemFold}{\mGDExperiment}{
+  \s\MYname	{E Packet}
+  \s\MYtext	{You feel yourself drawn towards the strange torus. Initially the effect is quite subtle, but all of a sudden you are shot forward with alarming intensity. You then find yourself \textbf{inside} the strange device, staring back at yourself. When \cGD{} disables the device, you rapidly retreat to your physical body, but the experience is still extremely disorienting. Your CR is reduced by 1 for the next three minutes. Roleplay accordingly.}
+  }
+  
+  \NEW{MemFold}{\mSciTaste}{
+  \s\MYname	{W Packet}
+  \s\MYtext	{This substance tastes like ambrosia. It somehow reminds you of a distant home, and you feel empowered by this connection. For the next 10 minutes, your CR is increased by 1. You also feel a positive connection towards the person who gave this to you.}
+  }
+  
+  \NEW{MemFold}{\mSciAmaranth}{
+  \s\MYname	{Open if you see item number \iWhiteNumber{} and the first letter of the item is ``A''}
+  \s\MYtext	{This substance is Elementium! But it appears to be naturally produced as part of some biological process, instead of the synthetic approach you use to create Elementium. Where did it come from, how is it made, and what purpose does it serve? You are very curious to find out the answers to these questions.}
+  }
+  
+  %  \NEW{MemFold}{\mSciBigTaste}{
+  %\s\MYname	{X Packet}
+  %\s\MYtext	{This substance tastes \emph{amazing}. You feel like you are a primal elemental sitting in the middle of the elemental plane. For the next 10 minutes, your CR is increased by 1. If the person who gave this to you is a human, you feel a very strong and positive connection towards them, as if they were a long-lost mentor. You can no longer enslave them, and you cannot attack them unless strongly provoked.}
+  %}
+  
+    \NEW{MemFold}{\mAziRetape}{
+  \s\MYname	{Z Packet}
+  \s\MYtext	{Your have a massive migraine from the vast amount of audio-visual stimuli that was just blasted at you. This procedure is painful and interacts in a very confusing fashion with your prior Azi training, leaving you in a persistent daze. Your previous connection to your supervisor has been severed, and your new supervisor is now \cMS{\intro}. The re-training forces you to obey \cMS{}'s commands unless they are suicidal or the action is extremely contrary to your character's persona. You can still act independently (including telling others what happened to you) unless \cMS{} orders you not to. Your new training has taught you how to enslave elementals by focusing your thoughts into a complicated pattern. \textbf{See a GM to get the Enslavement (Azi) ability.}}
+  }
+  
+%%Trigger to Air King that he is probably willing to sign a treaty at this point
+\NEW{MemFold}{\mWhiteTech}{
+  \s\MYname	{Open if you receive item number \iWhiteNumber{} from a human.}
+  \s\MYtext	{This substance is \textbf{extremely} important to elementals --- up until now, you thought that the Quintessence were the only beings capable of creating it. You are very curious as to how humans came by this substance. Can they create more? If they can, it is critical that you protect this source and keep it out of the hands of the other elementals. A steady supply of this substance is worth signing a treaty over.}
+}
+
+%%Triggers if Fire Queen or Avatar see white
+\NEW{MemFold}{\mSeeWhite}{
+  \s\MYname     {Open if you see item number \iWhiteNumber{} and the first letter of the item is ``E''}
+  \s\MYtext     {This Elementium looks just like Amaranth, the substance the Quintessence produce! But Elementium seems to be artificially manufactured. If humans are able to artificially manufacture this substance and provide it to elementals, the ramifications would be \textbf{massive}. You need to get to the bottom of this and find out exactly what is going on \textbf{right now}.}
+}
+
+\NEW{MemFold}{\mSeeMiniAir}{
+  \s\MYname     {Open if you talk with badge number 838} %\cMiniAir{\MYnumber}
+  \s\MYtext     {Did you really invite this little kid here? Oh yeah, you vaguely remember doing something like that. Maybe \cMiniAir{\they}'ll be useful. Maybe \cMiniAir{\they} won't. You don't have any specific plans for \cMiniAir{\them}, at least, you haven't made up any yet --- you only met \cMiniAir{\them} yesterday. And dang it, you've forgotten \cMiniAir{\their} name already...}
+}
+
+\NEW{MemFold}{\mLoseEssence}{
+  \s\MYname	{Open if you give away or lose an Elemental Essence.}
+  \s\MYtext	{That was painful! You have a -1CR for 10 minutes. If you were not warned about the procedure beforehand, you are likely quite angry at whoever took your essence. \emph{This mempacket triggers again if you lose another essence.}}
+}
+
+\NEW{MemFold}{\mAvatarLoseEssence}{
+  \s\MYname	{Open if you lose an Elemental Essence.}
+  \s\MYtext	{That was very painful. If you were not willing to have your essence removed, you are probably angry at whoever took your essence. \emph{This mempacket triggers again if you lose another essence.}}
+}
+
+%Avatar hear bell = tug at vitality mempacket
+\NEW{MemFold}{\mAvatarHearsBell}{
+  \s\MYname     {Open if you hear a bell}
+  \s\MYtext     {The bell presents a tugging at the elemental core of Vitality.  (There isn't a real sound in-game.)  Whatever caused that tugging may be able to get Vitality unstuck from \cAvatar{}.}
+}
+
+%\NEW{MemEnvelope}{\mMakeWhite}{
+%  \s\MYname	{Open if you see item number: 543}
+%  \s\MYtext	{Seeing this ``\iWhite{}'' has given you an idea.}
+%  \s\MYabils	{\aMakeWhite{}}
+%  }
+  
+\NEW{MemFold}{\mNaturalistSeesGD}{%% Put the actual GD number in here
+  \s\MYname     { Open when you see badge number 190 }
+  \s\MYtext     { Why, this is \cGD{\intro}!  You are filled with admiration, and suddenly feel very nervous approaching \cGD{\them}.  Roleplay accordingly.}
+  }
+
+\NEW{MemFold}{\mNaturalistSeesAziSci}{%% Put the actual AziSci number in her
+  \s\MYname     { Open when you see badge number 713}
+  \s\MYtext     { This must be \cDiplomat{}'s friend \cScientist{}.  \cScientist{they} seems very friendly and approachable.  Roleplay accordingly. }
+}
+  
+\NEW{MemFold}{\mIfEmberDies}{
+  \s\MYname     { Open if Ember dies.}% Using \cJuliet{} in \MYname breaks GameTeX
+  \s\MYtext     { You are overwhelmed with rage and sadness.  You determine you must find out whoever killed your sister and make sure they die a painful death.}
+}
+
+\NEW{MemFold}{\mUnstickAvatar}{
+  \s\MYname     {Q packet}
+  \s\MYtext     { That was a... fascinating story.  You can probably verify it by scanning \cAvatar{} with your \iTricorder{}.  If \cAvatar{\they}'s just lost it, you should probably find \cLeader{} or someone else for help.  Otherwise, \cAvatar{\they}'ll register as an unknown elemental type, which has probably gotten ``stuck'' in \cAvatar{}'s nervous system.  In that case, you can certainly separate the elemental from \cAvatar{} by using your electromagnet on \cAvatar{\them} for two minutes. }
+}
+
+\NEW{MemFold}{\mVitalityFree}{
+  \s\MYname     {Open if you get Vitality ``unstuck''}
+  \s\MYtext     { Vitality is elated by this development.  He flies around the room, a bright swirling white ball, streaking as he moves.  This is obvious to everyone in the area.  For one minute, your thoughts are your own.  Then Vitality comes back to you, joining with you again.  He's afraid of being alone, and afraid of what the other elementals might do if they catch him here.
+
+  At this point, you may choose to send Vitality back home through the Conduit at any time that it is open, though he will be somewhat unhappy about leaving if his goals are incomplete.  Note that if you choose to do so, you lose all abilities that require Vitality's presence, your CR drops to 2, and you are now as vulnerable to enslavement as any Cit. }
+}
+
+\NEW{MemFold}{\mConduitUnsticks}{
+  \s\MYname     {Open if you are within 4 ZoC of the Conduit when it is opened}
+  \s\MYtext     {If Vitality is still ``stuck'' to \cAvatar{}, the warping of the conduit causes a strange sensation.  You feel slightly lightheaded for the next five minutes.  After that time, open \mVitalityFree{}.
+
+If Vitality has already gotten ``unstuck'' or been sent home, ignore this mempacket. }
+}
+
+\NEW{MemEnvelope}{\mNaturalistReward}{
+  \s\MYname	{K packet}
+  \s\MYtext	{Congratulations, learning so much about humans has granted you a special ability to help you protect these fascinating creatures!}
+  \s\MYabils	{\aFascinatingThings{}}
+}

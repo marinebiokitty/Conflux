@@ -1,0 +1,617 @@
+%%%%%
+%%
+%% This file sets up the Char, PC, NPC, and Name datatypes and creates
+%% macros for each.  These are for characters in the game.  Here you
+%% use the fields in Char to assign elements to each character.
+%%
+%%
+%%
+%% \MYname (and the player name) is parsed by \parsename, the command
+%% provided by LaTeX/parsename.sty.  See that file and
+%% Extras/README-namemappings for ways to take advantage of this.
+%%
+%%
+%%
+%% \MYsex is set to either \male, \female, \neuter, or \ambiguous, as
+%% correct for the character.  \mfn{<masculine>}{<feminine>}{<neuter>}
+%% will produce the correct form based on the current value of \MYsex
+%% (\ambiguous will lead to <masculine>/<feminine>).  \mfn should only
+%% be used within the scope of a Char macro.  \mf{<masc>}{<fem>} works
+%% just like \mfn with the <neut> arg left blank.
+%%
+%% \pronoun{<command>}{<masc>}{<fem>}{<neut>} makes <command> a
+%% wrapper around \mfn.  It is used to create a list of
+%% gender-sensitive macros, mostly pronouns.  For example, given
+%% \pronoun{\They}{He}{She}{It}, \cJamesBond{\They} will produce He.
+%%
+%%
+%%
+%% \badgetrue and \badgefalse toggle whether or not a Char macro will
+%% produce a namebadge.
+%%
+%% \statstrue and \statsfalse will toggle the statcard.
+%%
+%% \skillstrue and \skillsfalse will toggle the skill list.  The skill
+%% list prints both skills and stats (even if \statsfalse is set).
+%%
+%% \sheettrue and \sheetfalse will toggle the character sheet.
+%%
+%% \listtrue and \listfalse toggle whether the Char macro can display
+%% in the playerlist.
+%%
+%% \labeltrue and \labelfalse toggle the box label.
+%%
+%%
+%%
+%% Some of the Char datatype's setup is in LaTeX/gametex.sty, to keep
+%% this file short.
+%%
+%%%%%
+
+
+
+%%%%%
+%% If a field is declared by \F, it must be given a value by \s inside
+%% \NEW, even if it's blank.  If you want it to be optional, declare
+%% it with \FD<field> {<default>} here.
+%%
+%% Use \newstat to create stats (below, in \PRESETS{Char}).  The
+%% <default> value is used unless the given Char macro sets the field.
+%% For example:
+%%
+%%   \newstat\MYhp	{Hit Points}{HP}{5}
+%%
+%% would give character a Hit Points stat, abbreviated HP, referenced
+%% as the \MYhp field, that defaults to 5.
+\PRESETS{Char}{
+  \FD\MYdesc	{} %% badge description
+
+  \newstat\MYcr	{Combat Rating}{CR}{2} %% for DarkWater-style combat
+  \newstat\MYbeta	{$\beta$}{$\beta$}{0} % Elemental Strength
+  \newstat\MYgamma	{$\gamma$}{$\gamma$}{0} % Elemental Type
+  %\newstat\MYzzzxr	{abc}{abcd}{0}
+
+  \FD\MYsex	{\male} %% \male, \female, \neuter, \ambiguous
+  \FD\MYrole	{} %% playerlist role
+  \FD\MYgroupstr{} %% playerlist groupstring
+  \FD\MYfile	{} %% character sheet filename (including .tex)
+  \FS\MYtext	{\ifx\MYfile\empty\else%
+		  \getextractenvs{document}{\chars/\MYfile}%
+		\fi}
+  \badgetrue\statstrue\skillstrue\sheettrue\listtrue\labeltrue
+  }
+
+\POSTSETS{Char}{
+  \resolvestats
+  }
+
+
+%%%%%
+%% pronouns and similar gender-based macros
+%%
+%% \male, \female, \neuter, \ambiguous
+%% \mfn{<masculine>}{<feminine>}{<neuter>}
+%% \mf{<masculine>}{<feminine>}
+%% \pronoun{<command>}{<masculine>}{<feminine>}{<neuter>}
+\def\male{0}\def\female{1}\def\neuter{2}\def\ambiguous{3}
+\newcommand{\mfn}[3]{\ifcase\MYsex#1\or#2\or#3\else#1/#2\fi}
+\newcommand{\mf}[2]{\mfn{#1}{#2}{}}
+\newcommand{\pronoun}[4]{\def#1{\mfn{#2}{#3}{#4}}}
+
+\pronoun{\they}		{he}{she}{it}
+\pronoun{\They}		{He}{She}{It}
+\pronoun{\them}		{him}{her}{it}
+\pronoun{\Them}		{Him}{Her}{It}
+\pronoun{\their}	{his}{her}{its}
+\pronoun{\Their}	{His}{Her}{Its}
+\pronoun{\theirs}	{his}{hers}{its}
+\pronoun{\Theirs}	{His}{Hers}{Its}
+\pronoun{\themself}	{himself}{herself}{itself}
+\pronoun{\Themself}	{Himself}{Herself}{Itself}
+\pronoun{\spouse}	{husband}{wife}{spouse}
+\pronoun{\Spouse}	{Husband}{Wife}{Spouse}
+\pronoun{\offspring}	{son}{daughter}{offspring}
+\pronoun{\Offspring}	{Son}{Daughter}{Offspring}
+\pronoun{\kid}		{boy}{girl}{kid}
+\pronoun{\Kid}		{Boy}{Girl}{Kid}
+\pronoun{\sibling}	{brother}{sister}{sibling}
+\pronoun{\Sibling}	{Brother}{Sister}{Sibling}
+\pronoun{\parent}	{father}{mother}{parent}
+\pronoun{\Parent}	{Father}{Mother}{Parent}
+\pronoun{\uncle}	{uncle}{aunt}{uncle}
+\pronoun{\Uncle}	{Uncle}{Aunt}{Uncle}
+\pronoun{\nephew}	{nephew}{niece}{nephew}
+\pronoun{\Nephew}	{Nephew}{Niece}{Nephew}
+\def\aunt{\uncle}
+\def\Aunt{\Uncle}
+\def\niece{\nephew}
+\def\Niece{\Nephew}
+\pronoun{\human}	{man}{woman}{human}
+\pronoun{\Human}	{Man}{Woman}{Human}
+\pronoun{\sex}		{male}{female}{neuter}
+\pronoun{\Sex}		{Male}{Female}{Neuter}
+
+
+%%%%%
+%% PC is a subtype of Char, for regular PCs.
+\DECLARESUBTYPE{PC}{Char}
+\PRESETS{PC}{\sd\MYgroupstr{pc}}
+
+
+%%%%%
+%% NPC is a subtype of Char.
+\DECLARESUBTYPE{NPC}{Char}
+\PRESETS{NPC}{\sd\MYgroupstr{npc}}
+
+
+%%%%%
+%% Name is a subtype of NPC.
+%% For an in-text name.  By default, produces no packet material.
+\DECLARESUBTYPE{Name}{Char}
+\PRESETS{Name}{
+  \badgefalse\statsfalse\skillsfalse\sheetfalse\listfalse\labelfalse
+  \sd\MYgroupstr{name}
+  }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% don't use \cTest as a copy-and-paste template to populate your
+%% character list.  Use something simpler, like
+%%
+%%   \NEW{PC}{\cBlah}{
+%%     \s\MYname	{}
+%%     \s\MYfile	{}
+%%     }
+%%
+%\NEW{PC}{\cTest}{
+%  \s\MYname	{Test Character}
+%  \s\MYfile	{README.tex}
+%  \s\MYnumber	{00000}
+%  \s\MYdesc	{a test}
+%  \s\MYplayer	{Test Player}
+%  \s\MYemail	{test@test.test}
+%  \s\MYaddress	{Test, rm 000}
+%  \s\MYphone	{x0-0000}
+%  \s\MYblues	{\bTest{}}
+%  \s\MYgreens	{\gTest{}\nGreenTest{}}
+%  \s\MYabils	{\aTest{}
+%		\aTestCombat{}
+%		}
+%  \s\MYitems	{\iTest{}\nTest{}}
+%  \s\MYwhites	{\wTest{}}
+%  \s\MYcash	{\cash{Dollar}{261}}
+%  }
+  
+\NEW{PC}{\cQueen}{ %%Fire Queen
+   \s\MYname	{Caldera}%%Part of a volcano!
+   \s\MYfile	{fireQueen.tex}
+   \s\MYplayer	{Maggie Ford}
+   \s\MYsex      {\female}
+   \s\MYnumber	{601}
+   \s\MYdesc     {A regal figure composed entirely of flames}
+ 
+  \s\MYblues	{\bElemental{} \bKnowQ{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aFireEnslave{} \aModifierSummonFire{} \aFireWall{} \aHeatThings{} \aBecomeFiery{} \aMindYourManners{} \aPhysicalContact{}}
+  \s\MYitems	{\iFireEssence{} \iFireEssence{} \iFireEssence{} \iFireEssence{}}
+  \s\MYmems {\mLoseEssence{} \mSeeWhite{}}
+  \s\MYcr	{6}
+  \s\MYbeta	{3}
+  \s\MYgamma	{1}
+ }
+ 
+\NEW{PC}{\cPyro}{ %%Fire second
+   \s\MYname	{Pyro}
+   \s\MYfile	{pyro.tex}
+   \s\MYplayer {Hannah Lipsky}
+   \s\MYsex      {\female}
+   \s\MYnumber	{543}
+    \s\MYdesc     {A burly figure, outlined with flames}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aFireEnslave{} \aModifierSummonFire{} \aHeatThings{} \aBecomeFiery{} \aWasThatConvincing{} \aPhysicalContact{}}
+  \s\MYitems	{\iFireEssence{} \iFireEssence{} \iFireEssence{}}
+  \s\MYmems {\mLoseEssence{} \mIfEmberDies{}}
+  \s\MYcr	{5}
+  \s\MYbeta     {2}
+  \s\MYgamma	{1}
+ }
+
+\NEW{PC}{\cJuliet}{
+   \s\MYname	{Ember}
+   \s\MYfile	{juliet.tex}
+   \s\MYplayer {Mashbayar Tugsbayar}
+   \s\MYsex      {\female}
+   \s\MYnumber	{219}
+    \s\MYdesc     {A petite figure in a dress made of flames}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aFireEnslave{} \aModifierSummonFire{} \aHeatThings{} \aBecomeFiery{} \aBlindingCharm{} \aPhysicalContact{}}
+  \s\MYitems	{\iFireEssence{} \iFireEssence{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{4}
+  \s\MYbeta	{1}
+  \s\MYgamma	{1}
+}
+ 
+\NEW{PC}{\cLoyal}{
+   \s\MYname	{Shale}
+   \s\MYfile	{loyal.tex}
+   \s\MYplayer {David Gupta}
+   \s\MYsex      {\male}
+   \s\MYnumber	{273} 
+   \s\MYdesc     {An imposing granite statue that moves}
+   
+  \s\MYblues	{\bElemental{} \bKnowQ{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aEarthEnslave{} \aModifierSummonQuintessence{} \aModifierSummonEarth{} \aEarthTrap{} \aEarthSpeaker{} \aDefySuperiors{}}
+  \s\MYitems	{\iEarthEssence{} \iEarthEssence{} \iEarthEssence{} \iOlympus{} \iHalfGeode{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{5}
+  \s\MYbeta	{2}
+  \s\MYgamma	{3}
+ }
+
+\NEW{PC}{\cRogue}{
+   \s\MYname	{Quake}
+   \s\MYfile	{rogue.tex}
+   \s\MYplayer {John Bauer}
+   \s\MYsex      {\male}
+   \s\MYnumber	{256}
+   \s\MYdesc     {An imposing limestone statue that moves}
+   
+  \s\MYblues	{\bElemental{} \bKnowQ{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aEarthEnslave{} \aModifierSummonQuintessence{} \aModifierSummonEarth{} \aEarthSpeaker{} \aFakeEnslavement{}}
+  \s\MYitems	{\iEarthEssence{} \iEarthEssence{} \iEarthEssence{} \iWireTightener{} \iOlympus{} \iHalfGeode{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{5}
+  \s\MYbeta	{2}
+  \s\MYgamma	{3}
+}
+
+
+\NEW{PC}{\cMinion}{ %%Earth minion
+   \s\MYname	{Skarn} %a kind of calcium-bearing silicate
+   \s\MYfile	{minion.tex}
+   \s\MYplayer {Jackie Zabel}
+   \s\MYsex      {\female}
+   \s\MYnumber	{679}
+   \s\MYdesc     {A smallish figure covered head to toe in dirt}
+   
+  \s\MYblues	{\bElemental{} \bKnowQ{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aEarthEnslave{} \aModifierSummonQuintessence{} \aModifierSummonEarth{} \aEarthSpeaker{} \aFascinatingDirt{}}
+  \s\MYitems	{\iEarthEssence{} \iEarthEssence{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{4}
+  \s\MYbeta	{1}
+  \s\MYgamma	{3}
+}
+ 
+\NEW{PC}{\cKing}{ %%Air King
+   \s\MYname	{Tempest}%%Violent Storm
+   \s\MYfile	{airKing.tex}
+   \s\MYplayer {Morgan Penngrath}
+   \s\MYsex      {\male}
+   \s\MYnumber	{107}
+   \s\MYdesc     {A whirlwind that occasionally coalesces into a humanoid shape}
+   
+  \s\MYblues	{\bElemental{} \bKnowQ{}}
+  \s\MYgreens	{\gSealingLocations{} \gEnslave{}}
+  \s\MYabils	{\aAirEnslave{} \aModifierSummonAir{} \aAirTeleport{} \aRemindsMe{}}
+  \s\MYitems	{\iAirEssence{} \iAirEssence{} \iAirEssence{} \iAirEssence{}}
+ % \s\MYwhites	{\multi{10}{\wSealedConduit{}}}
+  \s\MYmems {\mWhiteTech{} \mLoseEssence{} \mSeeMiniAir{}}
+  \s\MYcr	{6}
+  \s\MYbeta	{3}
+  \s\MYgamma	{4}
+ }
+
+\NEW{PC}{\cNaturalist}{ 
+   \s\MYname	{Zephyr}
+   \s\MYfile	{naturalist.tex}
+   \s\MYplayer {Maia Peirce}
+   \s\MYsex      {\female}
+   \s\MYnumber	{632}
+   \s\MYdesc     {A translucent figure with a few leaves caught in her tangled hair}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\nLearnAboutHumans{} \gEnslave{}}
+  \s\MYabils	{\aAirEnslave{} \aCollaborate{} \aUnsealConduit{} \aModifierSummonAir{} \aFirstAid{} \aFromHistory{}} %\aDrawBlood{}
+  \s\MYitems	{\iAirEssence{} \iAirEssence{} \iAirEssence{}}
+  \s\MYmems {\mLoseEssence{} \mNaturalistSeesGD{} \mNaturalistSeesAziSci{} \mNaturalistReward{}}
+  \s\MYcr	{5}
+  \s\MYbeta	{2}
+  \s\MYgamma	{4}
+}
+ 
+\NEW{PC}{\cGD}{
+   \s\MYname	{Katherine Strauss}
+   \s\MYfile	{grandDaughter.tex}
+   \s\MYplayer {Marie Chelberg}
+   \s\MYsex      {\female}
+   \s\MYnumber	{190}
+   \s\MYdesc     {A scientist wearing a lab coat stained with chemicals}
+   
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\nElectromagnet{} \gEthics{} \gEnslave{}}
+  \s\MYabils	{\aWorkConduit{} \aUnsealConduit{} \aModifierElectromagnet{} \aStudyHistory{}}
+  \s\MYitems	{\iElectromagnet{} \iTricorder{} \nTricorder{} \iNoteNatGD{}}
+  \s\MYwhites	{}
+  \s\MYmems {\mGDCollaboration{} \mGDExperiment{} \mGDExperiment{} \mUnstickAvatar{}}
+  \s\MYcr	{2}
+%  \s\MYbeta	{0}
+ }
+ 
+\NEW{PC}{\cAvatar}{
+   \s\MYname	{Patricia McClellan}
+   \s\MYfile	{avatar.tex}
+   \s\MYplayer {Amanda Stowers}
+   \s\MYsex      {\female}
+   \s\MYnumber	{150}
+   \s\MYdesc     {A stern woman with graying red hair}   
+   
+  \s\MYblues	{\bElemental{} \bHumanHistory{} \bKnowQ{}}
+  \s\MYgreens	{ \gTreaty{} \gEnslave{}}
+  \s\MYabils	{\aQEnslave{} \aResistEnslave{} \aModifierSummonQuintessence{} \aGlowInDark{} \aAvatarPsychlim{} \aCalmDown{} \aMakeWhite{}}
+  \s\MYitems	{\iQEssence{} \iQEssence{} \iQEssence{}}
+  \s\MYwhites	{}
+  \s\MYmems {\mAvatarLoseEssence{} \mSeeWhite{} \mAvatarHearsBell{} \mVitalityFree{} } %\mConduitUnsticks{}
+  \s\MYcr	{5}
+  \s\MYbeta	{2}
+  \s\MYgamma	{5}
+ }
+ 
+\NEW{PC}{\cDema}{ %%demagogue, human second in command
+   \s\MYname	{Jason Garrett}
+   \s\MYfile	{dema.tex}
+   \s\MYplayer {Chris Chelberg}
+   \s\MYsex      {\male}
+   \s\MYnumber	{461}
+   \s\MYdesc     {A passionate young man in a fashionable suit}   
+  
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\gEthics{} \gTreaty{} \gEnslave{}}
+  \s\MYabils	{\aFirstAid{} \aRaidLab{} \aExpertNegotiator{}}
+  \s\MYitems	{\iLabKey{}}
+  \s\MYwhites	{}
+  \s\MYmems {}
+  \s\MYcr	{3}
+  \s\MYbeta	{0}
+  \s\MYgamma	{1}
+ } 
+ 
+\NEW{PC}{\cLeader}{ %%Leader of the humans
+   \s\MYname	{Brandon Kollins}
+   \s\MYfile	{leader.tex}
+   \s\MYplayer {Kai Wu}
+   \s\MYsex      {\male}
+   \s\MYnumber	{810}
+   \s\MYdesc     {A charismatic older gentleman who radiates confidence}   
+   
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\gEthics{} \gTreaty{} \gEnslave{}}
+  \s\MYabils	{\aRaidLab{} \aLargerPurpose{}}
+  \s\MYitems	{\iEleShield{} \iVest{}}
+  \s\MYwhites	{}
+  \s\MYmems {}
+  \s\MYcr	{2}
+  \s\MYbeta	{0}
+ }
+
+\NEW{PC}{\cMS}{
+   \s\MYname	{Sofia Alexandrova}
+   \s\MYfile	{madScientist.tex}
+   \s\MYplayer {Beatrice Garrard}
+   \s\MYsex      {\female}
+   \s\MYnumber	{229}
+   \s\MYdesc     {A scientist with a mad glint in her eye}  
+    
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\nEnslavementResearch{} \gEthics{} \gEnslave{}}
+  \s\MYabils	{\aWorkConduit{} \aMadness{} \aMomentOfClarity{}}
+  \s\MYitems	{\iTablet{} \iTricorder{} \iLabKey{} \iAziTape{} \nTricorder{}}
+  \s\MYwhites	{}
+  \s\MYmems {}
+  \s\MYcr	{2}
+  \s\MYbeta	{0}
+ }
+ 
+\NEW{PC}{\cRomeo}{
+   \s\MYname	{Tris Remington}
+   \s\MYfile	{romeo.tex}
+   \s\MYplayer {Alex Harris}
+   \s\MYsex      {\male}
+   \s\MYnumber	{707}
+   \s\MYdesc     {A burly man in a sharp black suit with an ear piece}  
+    
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\nBelt{} \gEnslave{}}
+  \s\MYabils	{\aResistEnslave{} \aFirstAid{} \aAziLimits{} \aBodyguard{} \aRapidAssessment{}}
+  \s\MYitems	{\iEleBelt{} \iLabKey{}}
+  \s\MYwhites	{}
+  \s\MYmems {\mAziRetape{}}
+  \s\MYcr	{3}
+  \s\MYbeta	{0}
+  \s\MYgamma	{1}
+ }
+ 
+\NEW{PC}{\cScientist}{
+   \s\MYname	{Percy Bentz}
+   \s\MYfile	{aziScientist.tex}
+   \s\MYplayer {Daniel Shusta}
+   \s\MYsex      {\male}
+   \s\MYnumber	{713}
+   \s\MYdesc     {An intense man in a white lab coat}   
+  
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{\nWhiteResearch{} \gEthics{} \gEnslave{}}
+  \s\MYabils	{\aWorkConduit{} \aResistEnslave{} \aFirstAid{} \aAziLimits{} \aForScience{}}
+  \s\MYitems	{\iWhitePowder{} \iNoteNatAziSci{}}
+  \s\MYwhites	{}
+  \s\MYmems {\mSciTaste{} \mAziRetape{} \mSciAmaranth{}}
+  \s\MYcr	{2}
+  \s\MYbeta	{0}
+ }
+ 
+\NEW{PC}{\cDiplomat}{
+   \s\MYname	{Bernardette DeLuca}
+   \s\MYfile	{aziDiplomat.tex}
+   \s\MYplayer {Rachael Monosson}
+   \s\MYsex      {\female}
+   \s\MYnumber	{844}
+   \s\MYdesc     {An energetic young woman with brown hair}
+     
+  \s\MYblues	{\bHumanHistory{}}
+  \s\MYgreens	{ \gTreaty{} \gEnslave{}}
+  \s\MYabils	{\aResistEnslave{} \aAziLimits{} \aExpertNegotiator{}}
+  \s\MYitems	{}
+  \s\MYwhites	{}
+  \s\MYmems {\mStress{} \mAziRetape{}}
+  \s\MYcr	{2}
+  \s\MYbeta	{0}
+ }
+ 
+\NEW{PC}{\cMiniWater}{
+   \s\MYname	{Tide}
+   \s\MYfile	{miniWater.tex}
+   \s\MYplayer {Dana Murphy}
+   \s\MYsex      {\female}
+   \s\MYnumber	{683}
+   \s\MYdesc     {A very small figure dripping water everywhere}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\gEnslave{}} {\gUnsealConduit}
+  \s\MYabils	{\aModifierSummonWater{} \aWaterSneaky{} \aPickLocks{} \aUnsealConduit{} \aUsefulRunt{} \aWaterEnslave{}}
+  \s\MYitems	{\iWaterEssence{} \iPuddle{} \iNoteWaterEarth{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{3}
+  \s\MYbeta	{1}
+  \s\MYgamma	{2}
+}
+
+\NEW{PC}{\cMiniEarth}{
+   \s\MYname	{Pebble}
+   \s\MYfile	{miniEarth.tex}
+   \s\MYplayer {}
+   \s\MYsex      {\female}
+   \s\MYnumber	{169}
+   \s\MYdesc     {A very small figure with a pocket full of stones}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aModifierSummonEarth{} \aEarthSpeaker{} \aInsubordination{}}
+  \s\MYitems	{\iEarthEssence{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{3}
+  \s\MYbeta	{1}
+  \s\MYgamma	{3}
+}
+
+\NEW{PC}{\cMiniAir}{
+   \s\MYname	{Wisp}
+   \s\MYfile	{miniAir.tex}
+   \s\MYplayer {Song Wang}
+   \s\MYsex      {\male}
+   \s\MYnumber	{838}
+   \s\MYdesc     {A very small figure surrounded by a little dust devil}
+   
+  \s\MYblues	{\bElemental{}}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYabils	{\aModifierSummonAir{} \aModifierSummonWater{} \aLearnSong{} \aDontMindMe{}}
+  \s\MYitems	{\iAirEssence{}}
+  \s\MYmems {\mLoseEssence{}}
+  \s\MYcr	{3}
+  \s\MYbeta	{1}
+  \s\MYgamma	{4}
+}
+
+%%Here are the additional NPCs that may be summoned
+
+%Summoned quintessence elemental
+\NEW{NPC}{\cNewQ}{
+  \s\MYname  {Young Quintessence}
+  \s\MYfile{newQ.tex}
+  
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYcr	{2}
+  \s\MYbeta	{1}
+  \s\MYgamma	{5}
+}
+
+\NEW{NPC}{\cElderQ}{
+  \s\MYname  {Stasis}
+  \s\MYfile{elderQ.tex}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYcr	{16}
+  \s\MYbeta	{5}
+  \s\MYgamma	{5}
+}
+
+%Summoned quintessence elemental
+\NEW{NPC}{\cNewElemental}{
+  \s\MYname  {Young Elemental}
+  \s\MYfile{newElemental.tex}
+  
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYcr	{3}
+  \s\MYbeta	{1}
+}
+
+%Summoned fire elemental
+\NEW{NPC}{\cElder}{
+  \s\MYname  {Gehenna}
+  \s\MYfile{elderElemental.tex}
+  \s\MYgreens	{\gEnslave{}}
+  \s\MYcr	{15}
+  \s\MYbeta	{5}
+  \s\MYgamma	{1}
+}
+
+%GM's have extra copies of the enslave abilities to give to the corresponding NPC elementals.
+\NEW{NPC}{\cGM}{
+  \s\MYname  {We are the game masters.}
+  \s\MYfile{GM.tex}
+  \s\MYgreens {\gActiveConduitLocations{} \gStats{} \gEndGame{} \gElementalEggs{} \gElementalEggs{} \gElementalEggs{} }
+  \s\MYabils	{\aModifierChannelWhite{} \aDominate{} \aAziEnslave{} \aAziEnslave{} \aAziEnslave{} \aQEnslave{} \aFireEnslave{} \aEarthEnslave{} \aAirEnslave{} \aWaterEnslave{} \aModifierSummonQuintessence{} \aModifierSummonFire{} \aModifierSummonEarth{} \aMakeWhite{}}
+  \s\MYitems	{\iEarthEssence{} \iEarthEssence{} \iEarthEssence{} \iFireEssence{} \iFireEssence{} \iFireEssence{} \iFireEssence{} \iFireEssence{} \iFireEssence{} \iAirEssence{} \iAirEssence{} 
+  \iQEssence{} \iQEssence{} \iQEssence{} \iQEssence{} \iQEssence{}}
+  \s\MYcr	{7777}
+}
+
+%%If you need characters that don't appear in game, list them here using this template.
+
+%\NEW{Name}{\cSomeGuy}{
+%  \maptrueformal %% most call him Sir Not-Appearing
+%  \s\MYname	{Sir \pre Robert Not-Appearing}
+%  }
+
+\NEW{Name}{\cGrandfather}{
+  \maptrueformal %% Name/gender of Granddaughter's Grandfather for general reference.
+  \s\MYname	{Konrad Strauss}
+  \s\MYsex{\male}
+  }
+
+\NEW{Name}{\cEarthKing}{
+  \maptrueformal %% Name/gender the Earth King
+  \s\MYname	{Olympus}
+  \s\MYsex{\male}
+  }
+  
+\NEW{Name}{\cWaterQueen}{
+  \maptrueformal %% Name/gender the Water Queen
+  \s\MYname	{Maelstrom}
+  \s\MYsex{\female}
+  }
+  
+\NEW{Name}{\cNewUN}{
+  \maptrueformal %% Name/gender of the human government for general reference.
+  \s\MYname	{Alliance of Nations}
+  \s\MYsex{\neuter}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

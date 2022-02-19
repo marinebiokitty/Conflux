@@ -1,0 +1,16 @@
+LRSguildcamp1_path.cls
+*.aux
+*.pdf
+*.gz
+*.log
+*.sty~
+*.cls~
+*.gz(busy)
+*.toc
+*.fls
+*.dvi
+*.tex~
+*latexmk
+LaTeX/elementals_path.cls.tex
+LaTeX/elementals_path.cls
+

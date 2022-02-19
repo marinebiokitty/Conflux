@@ -1,0 +1,71 @@
+%%%%%
+%%
+%% This file sets up the Notebook and GreenNotebook datatypes and
+%% creates Notebook and GreenNotebook macros.  These are for in-game
+%% and out-of-game notebooks.
+%%
+%%%%%
+
+\DECLARESUBTYPE{Notebook}{TransElement}
+\PRESETS{Notebook}{
+  \FD\MYfile	{} %% filename (in \notebooks dir)
+  \FS\MYtext	{\getextractenvs{document}{\notebooks/\MYfile}}
+  \sd\MYlistmap	{\item\MYname\ (in-game notebook)}
+  }
+
+\DECLARESUBTYPE{GreenNotebook}{Element}
+\PRESETS{GreenNotebook}{
+  \FD\MYfile	{} %% filename (in \notebooks dir)
+  \FS\MYtext	{\getextractenvs{document}{\notebooks/\MYfile}}
+  \sd\MYlistmap	{\item\MYname\ (out-of-game notebook)}
+  }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\NEW{Notebook}{\nTest}{
+%  \s\MYname	{Test Research Notebook}
+%  \s\MYfile	{README.tex}
+%  }
+%
+%\NEW{GreenNotebook}{\nGreenTest}{
+%  \s\MYname	{Test Out-of-Game Notebook}
+%  \s\MYfile	{README-green.tex}
+%  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+\NEW{GreenNotebook}{\nElectromagnet}{
+  \s\MYname	{The Electromagnet}
+  \s\MYfile	{electromagnet.tex}
+  }
+  
+\NEW{GreenNotebook}{\nEnslavementResearch}{
+  \s\MYname	{Elemental Enslavement}
+  \s\MYfile	{enslavementResearch.tex}
+  }
+  
+\NEW{GreenNotebook}{\nWhiteResearch}{
+  \s\MYname	{The Mysterious Powder}
+  \s\MYfile	{whiteResearch.tex}
+  }
+  
+\NEW{GreenNotebook}{\nBelt}{
+  \s\MYname	{The Elemental Barrier Belt}
+  \s\MYfile	{elementalShield.tex}
+  }  
+  
+\NEW{Notebook}{\nTricorder}{
+  \s\MYname	{Functionality of the Tricorder} %%it needs a name
+  \s\MYfile	{Tricorder.tex}
+  }
+  
+\NEW{GreenNotebook}{\nDampener}{
+  \s\MYname	{Extending the Suppressor Field} %%it needs a name
+  \s\MYfile	{ElementalDampener.tex}
+  }
+  
+\NEW{GreenNotebook}{\nLearnAboutHumans}{
+  \s\MYname	{Learn about Humans} %%it needs a name
+  \s\MYfile	{NaturalistResearch.tex}
+  }
